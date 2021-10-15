@@ -1,7 +1,9 @@
 #include "ene_resistor.h"
 
-ene_resistor::ene_resistor()
+ene_resistor::ene_resistor(int width, int height)
 {
+    w = width;
+    h = height;
     original.load(":/images/Resistor Circular/resistor_0.png");
     setPixmap(original.scaled(w,h));
 }

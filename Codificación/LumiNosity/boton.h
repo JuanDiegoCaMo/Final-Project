@@ -8,9 +8,11 @@
 class boton: public QObject, public QGraphicsPixmapItem
 {
 public:
-    boton();
+    boton(int width, int height);
+    void setImg(int type);
 private:
-    QPixmap original;
+    QPixmap original,img;
+    int w,h;
 };
 
 #endif // BOTON_H

@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     prot1 = new prota(tam,tam,0);
     prot2 = new prota(tam,tam,1);
     ball = new canonBall(tam,tam);
+    bombilla = new bulb(tam,tam);
 
     ui->setupUi(this);
     timeMovProta = new QTimer;
@@ -37,30 +38,10 @@ void MainWindow::setupWindow()
 
 void MainWindow::setupMapa()
 {
+    setupObjectslvl1();
     prot1->setPos(tam*1,tam*1);
     prot2->setPos(tam*(ancho-2),tam*(alto-2));
     ball->setPos(tam*2,tam*2);
-    short int level1[ancho][alto];
-    for(int fil=0; fil<alto;fil++){
-        for(int col=0; col<ancho;col++){
-            if(fil==1 || col==1 || fil==alto-1 || col==ancho-1){
-                level1[fil][col] = 1;
-            }
-            else{
-                level1[fil][col] = 0;
-            }
-        }
-    }
-    for(int fil=0; fil<alto;fil++){
-        for(int col=0; col<ancho;col++){
-            if(fil==1 || col==1 || fil==alto-1 || col==ancho-1){
-
-            }
-            else{
-                level1[fil][col] = 0;
-            }
-        }
-    }
     scene->addItem(prot1);
     scene->addItem(prot2);
     scene->addItem(ball);
@@ -68,7 +49,7 @@ void MainWindow::setupMapa()
 
 void MainWindow::setupObjectslvl1()
 {
-    static unsigned char lvl1[alto][ancho]={ //Revisar octales, tipo short[33]
+    /*static unsigned char lvl1[alto][ancho]={ //Revisar octales, tipo short[33]
         {00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00},
         {00,15,03,99,03,03,03,11,03,99,03,03,14,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,00},
         {00,02,01,01,01,01,01,02,01,01,01,01,99,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,01,00},
@@ -86,9 +67,46 @@ void MainWindow::setupObjectslvl1()
         {00,01,01,01,00,01,01,01,01,00,01,50,50,50,50,50,01,00,01,01,01,01,00,12,99,10,01,99,01,01,01,02,00},
         {00,01,01,01,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,01,01,12,003,9,03,99,03,13,00},
         {00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00}
-    };
+    };*/
+    string info1, objslvl1 = "lvl1.dat", subinfo1;
+    int semilla = 7;
+    bool write = true;
     int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0;
-    for(int fil=0; fil<alto; fil++){
+    info1 = decodeTxt(semilla,objslvl1);
+    if(info1[0] == ',' && info1[1] == '0' && info1[2] == '0') write = false;
+    codeTxt(semilla,objslvl1, write);
+    info1 = decodeTxt(semilla,objslvl1);
+    for(int i=0; i<int(info1.length()); i++){
+        if(info1[i] == ','){
+            subinfo1.push_back(info1[i+1]);
+            subinfo1.push_back(info1[i+2]);
+            int mult = 10, data = 0;
+            for(int ind = 0; ind<int(subinfo1.length()); ind++){
+                data += ((subinfo1[ind]-48)*mult);
+                mult /= 10;
+            }
+            if(data<=16){
+                contObs++;
+            }
+            else if(data==99 || data==96){
+                contResis++;
+            }
+            else if(data==50){
+                contButts++;
+            }
+            else if(data==97){
+                contSierras++;
+            }
+            else if(data==95){
+                contCanons++;
+            }
+            else if(data==94){
+                contPlats++;
+            }
+            subinfo1.clear();
+        }
+    }
+    /*for(int fil=0; fil<alto; fil++){
         for(int col=0; col<ancho; col++){
             if(int(lvl1[fil][col])<=16){
                 contObs++;
@@ -109,36 +127,99 @@ void MainWindow::setupObjectslvl1()
                 contPlats++;
             }
         }
-    }
-    canion = new canon[contCanons];
-    resistor = new ene_resistor[contResis];
-    sierra = new ene_sierra[contSierras];
-    button = new boton[contButts];
-    plat1 = new movilPlat[contPlats];
+    }*/
+    mapa = new obstacles*[contObs];
+    for(int i=0; i<contObs; i++)    mapa[i] = new obstacles(tam,tam);
+    canion = new canon*[contCanons];
+    for(int i=0; i<contObs; i++)    canion[i] = new canon(tam,tam);
+    resistor = new ene_resistor*[contResis];
+    for(int i=0; i<contObs; i++)    resistor[i] = new ene_resistor(tam,tam);
+    sierra = new ene_sierra*[contSierras];
+    for(int i=0; i<contObs; i++)    sierra[i] = new ene_sierra(tam,tam);
+    button = new boton*[contButts];
+    for(int i=0; i<contObs; i++)    button[i] = new boton(tam,tam);
+    plat1 = new movilPlat*[contPlats];
+    for(int i=0; i<contObs; i++)    plat1[i] = new movilPlat(tam,tam);
 
-    for(int fil = 0; fil<alto; fil++){
-        for(int col = 0; col<ancho; col++){
-            if(int(lvl1[fil][col])<=16){
-                //contObs++;
+    contPlats = 0, contButts = 0, contSierras = 0, contResis = 0, contCanons = 0, contObs = 0;
+    int anch = 0, alt = 0;
+    for(int i=0; i<int(info1.length()); i++){
+        if(info1[i] == ','){
+            subinfo1.push_back(info1[i+1]);
+            subinfo1.push_back(info1[i+2]);
+            int mult = 10, data = 0;
+            for(int ind = 0; ind<int(subinfo1.length()); ind++){
+                data += ((subinfo1[ind]-48)*mult);
+                mult /= 10;
             }
-            else if(int(lvl1[fil][col])==99 || int(lvl1[fil][col])==96){
-                //contResis++;
+            if(data<=16){
+                mapa[contObs]->setImg(data);
+                mapa[contObs]->setPos(anch*tam,alt*tam);
+                scene->addItem(mapa[contObs]);
+                contObs++;
             }
-            else if(int(lvl1[fil][col])==50){
-                //contButts++;
+            else if(data==99 || data==96){
+
+                contResis++;
             }
-            else if(int(lvl1[fil][col])==97){
-                //contSierras++;
+            else if(data==50){
+                contButts++;
             }
-            else if(int(lvl1[fil][col])==95){
-                //contCanons++;
+            else if(data==97){
+                contSierras++;
             }
-            else if(int(lvl1[fil][col])==94){
-                //contPlats++;
+            else if(data==95){
+                contCanons++;
             }
+            else if(data==94){
+                contPlats++;
+            }
+            else if(data==98){
+                bombilla->setImg(0);
+                bombilla->setPos(anch*tam,alt*tam);
+                scene->addItem(bombilla);
+            }
+            subinfo1.clear();
+            anch+=1;
+        }
+        if(info1[i] == ':'){
+            alt+=1;
         }
     }
 }
+
+bool MainWindow::codeTxt(int semilla, string n_archivo, bool first)
+{
+    bool result=true;
+    string texto,binario;
+    try {
+        texto=leer(n_archivo,true);
+        binario=text2bin(texto);
+        binario=reglas_codifica(binario,semilla,true);
+        texto=bin2text(binario);
+        if(first) escribir(texto,n_archivo,false);
+    }  catch (...) {
+        result=false;
+    }
+    return result;
+}
+
+string MainWindow::decodeTxt(int semilla, string n_archivo)
+{
+    bool result=true;
+    string texto,binario;
+    try {
+        texto=leer(n_archivo,false);
+        binario=text2bin(texto);
+        binario=reglas_codifica(binario,semilla,false);
+        texto=bin2text(binario);
+    }  catch (...) {
+        result=false;
+    }
+    if(result==false) return string("");
+    else return texto;
+}
+
 
 void MainWindow::animProta()
 {

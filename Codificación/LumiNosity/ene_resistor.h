@@ -8,7 +8,7 @@
 class ene_resistor: public QObject, public QGraphicsPixmapItem
 {
 public:
-    ene_resistor();
+    ene_resistor(int width, int height);
     bool getIsColliding();
     void setIsColliding(bool setColl);
     bool getHasButton();

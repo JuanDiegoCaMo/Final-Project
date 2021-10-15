@@ -8,7 +8,11 @@
 class ene_sierra: public QObject, public QGraphicsPixmapItem
 {
 public:
-    ene_sierra();
+    ene_sierra(int width, int height);
+    void setImg(int type);
+private:
+    QPixmap original, img;
+    int w,h;
 };
 
 #endif // ENE_SIERRA_H

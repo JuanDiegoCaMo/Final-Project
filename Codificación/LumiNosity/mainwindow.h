@@ -9,6 +9,7 @@
 #include <QImage>
 #include <QKeyEvent>
 #include "boton.h"
+#include "bulb.h"
 #include "canon.h"
 #include "canonball.h"
 #include "chargers.h"
@@ -17,6 +18,7 @@
 #include "movilplat.h"
 #include "obstacles.h"
 #include "prota.h"
+#include "Metodo_2.h"
 
 #define ancho 33 //max 1350
 #define alto 17 //max 690
@@ -37,6 +39,8 @@ public:
     void setupWindow();
     void setupMapa();
     void setupObjectslvl1();
+    bool codeTxt(int semilla,string n_archivo, bool first);
+    string decodeTxt(int semilla, string n_archivo);
 public slots:
     void animProta();
 
@@ -46,14 +50,15 @@ private slots:
 private:
     Ui::MainWindow *ui;
     prota *prot1, *prot2;
-    obstacles *mapa;
-    boton *button;
-    movilPlat *plat1;
-    ene_sierra *sierra;
-    ene_resistor *resistor;
-    chargers *cargador;
+    obstacles **mapa;
+    boton **button;
+    bulb *bombilla;
+    movilPlat **plat1;
+    ene_sierra **sierra;
+    ene_resistor **resistor;
+    chargers **cargador;
     canonBall *ball;
-    canon *canion;
+    canon **canion;
     QGraphicsScene *scene;
     QTimer *timeMovProta;
 };

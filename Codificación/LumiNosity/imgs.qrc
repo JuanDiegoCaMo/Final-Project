@@ -30,5 +30,7 @@
         <file>images/Jugadores/Per_0.png</file>
         <file>images/Obstaculos/obs.png</file>
         <file>images/Boton/button_0.png</file>
+        <file>images/Sierra Circular/sierra.png</file>
+        <file>images/Bombilla/bulb.png</file>
     </qresource>
 </RCC>

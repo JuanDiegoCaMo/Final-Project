@@ -8,7 +8,11 @@
 class movilPlat: public QObject, public QGraphicsPixmapItem
 {
 public:
-    movilPlat();
+    movilPlat(int width, int height);
+    void setImg(int type);
+private:
+    QPixmap original, img;
+    int w,h;
 };
 
 #endif // MOVILPLAT_H
