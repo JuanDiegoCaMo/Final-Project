@@ -8,7 +8,10 @@
 class canon: public QObject, public QGraphicsPixmapItem
 {
 public:
-    canon();
+    canon(int width, int height);
+private:
+    QPixmap original;
+    int w,h;
 };
 
 #endif // CANON_H

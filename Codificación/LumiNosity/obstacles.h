@@ -5,10 +5,14 @@
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 
-class obstacles: public QObject, public QGraphicsPixmapItem //Muro, cables y Fondo
+class obstacles: public QObject, public QGraphicsPixmapItem //Muro, Cables y Fondo
 {
 public:
-    obstacles();
+    obstacles(int width, int height);
+    void setImg(int type);
+private:
+    QPixmap original, img;
+    int w, h;
 };
 
 #endif // OBSTACLES_H

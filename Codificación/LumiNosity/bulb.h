@@ -1,18 +1,18 @@
-#ifndef MOVILPLAT_H
-#define MOVILPLAT_H
+#ifndef BULB_H
+#define BULB_H
 
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
 
-class movilPlat: public QObject, public QGraphicsPixmapItem
+class bulb: public QObject, public QGraphicsPixmapItem
 {
 public:
-    movilPlat(int width, int height);
+    bulb(int width, int height);
     void setImg(int type);
 private:
     QPixmap original, img;
     int w,h;
 };
 
-#endif // MOVILPLAT_H
+#endif // BULB_H
