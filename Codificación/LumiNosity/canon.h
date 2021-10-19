@@ -9,8 +9,9 @@ class canon: public QObject, public QGraphicsPixmapItem
 {
 public:
     canon(int width, int height);
+    void setImg(int type, bool part);
 private:
-    QPixmap original;
+    QPixmap original, img, base;
     int w,h;
 };
 

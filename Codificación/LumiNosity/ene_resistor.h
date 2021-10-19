@@ -9,13 +9,12 @@ class ene_resistor: public QObject, public QGraphicsPixmapItem
 {
 public:
     ene_resistor(int width, int height);
-    bool getIsColliding();
-    void setIsColliding(bool setColl);
     bool getHasButton();
+    void setHasButton(bool setButt, int numOfButt);
 private:
     QPixmap original;
     int w,h, numButton = 0;
-    bool isColliding = false, hasButton = false;
+    bool hasButton = false;
 };
 
 #endif // ENE_RESISTOR_H

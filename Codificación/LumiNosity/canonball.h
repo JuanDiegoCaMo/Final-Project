@@ -10,8 +10,9 @@ class canonBall: public QObject, public QGraphicsPixmapItem
 public:
     canonBall(int width, int height);
     void setAnim();
+    int getHeight();
 private:
-    QPixmap original;
+    QPixmap original, img;
     int w, h, cont = 0;
 };
 

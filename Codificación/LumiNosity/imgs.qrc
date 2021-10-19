@@ -32,5 +32,7 @@
         <file>images/Boton/button_0.png</file>
         <file>images/Sierra Circular/sierra.png</file>
         <file>images/Bombilla/bulb.png</file>
+        <file>images/Canon/base.png</file>
+        <file>images/Canon/tube.png</file>
     </qresource>
 </RCC>

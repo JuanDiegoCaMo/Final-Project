@@ -8,17 +8,13 @@ ene_resistor::ene_resistor(int width, int height)
     setPixmap(original.scaled(w,h));
 }
 
-bool ene_resistor::getIsColliding()
-{
-    return isColliding;
-}
-
-void ene_resistor::setIsColliding(bool setColl)
-{
-    isColliding = setColl;
-}
-
 bool ene_resistor::getHasButton()
 {
     return hasButton;
+}
+
+void ene_resistor::setHasButton(bool setButt, int numOfButt)
+{
+    hasButton = setButt;
+    numButton = numOfButt;
 }

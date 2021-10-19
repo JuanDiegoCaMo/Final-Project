@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QString>
+#include <QMessageBox>
 #include <QFontDatabase>
 #include <QTimer>
 #include <QImage>
@@ -39,6 +40,7 @@ public:
     void setupWindow();
     void setupMapa();
     void setupObjectslvl1();
+    bool evalEnergy(bool isProt1, int modify);
     bool codeTxt(int semilla,string n_archivo, bool first);
     string decodeTxt(int semilla, string n_archivo);
 public slots:
@@ -61,5 +63,8 @@ private:
     canon **canion;
     QGraphicsScene *scene;
     QTimer *timeMovProta;
+    short int lvl1[alto][ancho];
+    int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0, lives = 3;
+    double scaleFactor = 1;
 };
 #endif // MAINWINDOW_H

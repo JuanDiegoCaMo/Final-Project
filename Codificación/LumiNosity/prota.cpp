@@ -22,3 +22,23 @@ void prota::setAnim(bool numAnim)
     if(dirAnim) cont = cont + 1;
     else cont = cont - 1;
 }
+
+float prota::getScale()
+{
+    return scale;
+}
+
+void prota::setNumScale(float scaleNum)
+{
+    scale = scaleNum;
+}
+
+int prota::getEnergy()
+{
+    return energy;
+}
+
+void prota::setEnergy(int ener)
+{
+    energy = ener;
+}
