@@ -18,3 +18,15 @@ void ene_resistor::setHasButton(bool setButt, int numOfButt)
     hasButton = setButt;
     numButton = numOfButt;
 }
+
+int ene_resistor::getNumButton()
+{
+    return numButton;
+}
+
+void ene_resistor::replace(int type)
+{
+    cables.load(":/images/Obstaculos/obs.png");
+    img = cables.copy(32*type,0,32,32);
+    setPixmap(img.scaled(w,h));
+}

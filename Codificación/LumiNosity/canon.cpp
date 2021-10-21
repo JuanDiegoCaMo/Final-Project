@@ -21,4 +21,20 @@ void canon::setImg(int type, bool part)
         else    img = base.copy(38*1+type,0,38,42);
         setPixmap(img.scaled(w,h));
     }
+    whichPart = part;
+}
+
+bool canon::getWhichPart()
+{
+    return whichPart;
+}
+
+int canon::getPower()
+{
+    return power;
+}
+
+void canon::setPower(int setPwr)
+{
+    power = setPwr;
 }

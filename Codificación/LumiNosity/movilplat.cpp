@@ -13,4 +13,21 @@ void movilPlat::setImg(int type)
 {
     img = original.copy(32*type,0,32,32);
     setPixmap(img.scaled(w,h));
+    if(type == 2) tipo = 1;
+    else if(type == 0) tipo = 0;
+}
+
+int movilPlat::getTipo()
+{
+    return tipo;
+}
+
+int movilPlat::getDir()
+{
+    return dir;
+}
+
+void movilPlat::setDir(int direction)
+{
+    dir = direction;
 }

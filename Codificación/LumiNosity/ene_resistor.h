@@ -11,8 +11,10 @@ public:
     ene_resistor(int width, int height);
     bool getHasButton();
     void setHasButton(bool setButt, int numOfButt);
+    int getNumButton();
+    void replace(int type);
 private:
-    QPixmap original;
+    QPixmap original, cables, img;
     int w,h, numButton = 0;
     bool hasButton = false;
 };

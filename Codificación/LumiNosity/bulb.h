@@ -10,9 +10,10 @@ class bulb: public QObject, public QGraphicsPixmapItem
 public:
     bulb(int width, int height);
     void setImg(int type);
+    int getTipo();
 private:
     QPixmap original, img;
-    int w,h;
+    int w,h, tipo = 0;
 };
 
 #endif // BULB_H

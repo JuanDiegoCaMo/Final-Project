@@ -9,6 +9,8 @@
 #include <QTimer>
 #include <QImage>
 #include <QKeyEvent>
+#include <QtMath>
+#include "math.h"
 #include "boton.h"
 #include "bulb.h"
 #include "canon.h"
@@ -40,11 +42,14 @@ public:
     void setupWindow();
     void setupMapa();
     void setupObjectslvl1();
+    void sceneScale1();
+    void nextLvl();
     bool evalEnergy(bool isProt1, int modify);
     bool codeTxt(int semilla,string n_archivo, bool first);
     string decodeTxt(int semilla, string n_archivo);
 public slots:
     void animProta();
+    void simul();
 
 private slots:
     void on_newGame_clicked();
@@ -52,19 +57,22 @@ private slots:
 private:
     Ui::MainWindow *ui;
     prota *prot1, *prot2;
-    obstacles **mapa;
+    obstacles **mapa, **energy;
     boton **button;
     bulb *bombilla;
     movilPlat **plat1;
     ene_sierra **sierra;
     ene_resistor **resistor;
     chargers **cargador;
-    canonBall *ball;
+    canonBall *ball, *ball2;
     canon **canion;
     QGraphicsScene *scene;
-    QTimer *timeMovProta;
+    QByteArray geoCan1, geoCan2;
+    QTimer *timeMovProta, *timeSimuls;
     short int lvl1[alto][ancho];
-    int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0, lives = 3;
-    double scaleFactor = 1;
+    int actualLvl = 1;
+    int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0, lives = 3, T = 50, movY = 0, movY2 = 0;
+    double scaleFactor = 0.625;
+    bool canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
 };
 #endif // MAINWINDOW_H
