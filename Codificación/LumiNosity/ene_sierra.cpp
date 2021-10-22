@@ -22,3 +22,13 @@ void ene_sierra::setAnim()
     if(dirAnim) cont = cont + 1;
     else cont = cont - 1;
 }
+
+int ene_sierra::getTypeMov()
+{
+    return typeMov;
+}
+
+void ene_sierra::setTypeMov(int typeOfMov)
+{
+    typeMov = typeOfMov;
+}

@@ -5,19 +5,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    ball = new canonBall(tam,tam);
-    ball2 = new canonBall(tam,tam);
-    bombilla = new bulb(tam,tam);
 
     ui->setupUi(this);
-    timeMovProta = new QTimer;
-    timeMovProta->start(75);
-    timeSimuls = new QTimer;
-
-    connect(timeMovProta,SIGNAL(timeout()),this,SLOT(animProta()));
-    connect(timeSimuls,SIGNAL(timeout()),this,SLOT(simul()));
-    setupWindow();
-    setupMapa();
+    ui->barCanon1->hide();
+    ui->barCanon2->hide();
+    setupWindow(true);
 }
 
 MainWindow::~MainWindow()
@@ -40,13 +32,13 @@ MainWindow::~MainWindow()
     delete prot2;
 }
 
-void MainWindow::setupWindow()
+void MainWindow::setupWindow(bool isInitMenu)
 {
     scene=new QGraphicsScene;
     ui->graphicsView->setGeometry(0,0,tam*ancho+2,tam*alto+2);
     scene->setSceneRect(0,0,tam*ancho,tam*alto);
     ui->graphicsView->setScene(scene);
-    ui->graphicsView->setBackgroundBrush(QBrush(QImage(":/images/Obstaculos/obs_1.png")));
+    if(!isInitMenu) ui->graphicsView->setBackgroundBrush(QBrush(QImage(":/images/Obstaculos/obs_1.png")));
     setFixedSize(tam*ancho+2,tam*alto+2);
     setWindowTitle("LumiNosity");
 
@@ -54,13 +46,24 @@ void MainWindow::setupWindow()
 
 void MainWindow::setupMapa()
 {
+    setupWindow(false);
     setupObjectslvl1();
     prot1 = new prota(tam,tam,0);
     prot2 = new prota(tam,tam,1);
+    ball = new canonBall(tam,tam);
+    ball2 = new canonBall(tam,tam);
     prot1->setPos(tam*1,tam*1);
     prot2->setPos(tam*(ancho-2),tam*(alto-2));
     ball->setPos(tam*2,tam*2);
     ball2->setPos(tam*3,tam*3);
+
+    timeMovProta = new QTimer;
+    timeMovProta->start(75);
+    timeSimuls = new QTimer;
+
+    connect(timeMovProta,SIGNAL(timeout()),this,SLOT(animProta()));
+    connect(timeSimuls,SIGNAL(timeout()),this,SLOT(simul()));
+
     scene->addItem(prot1);
     scene->addItem(prot2);
     scene->addItem(ball);
@@ -71,14 +74,30 @@ void MainWindow::setupMapa()
 
 void MainWindow::setupObjectslvl1()
 {
-    string info1, objslvl1 = "../LumiNosity/lvl1.dat", subinfo1;
+    string info1, objslvl1 = "../LumiNosity/lvl1.dat", subinfo1, objslvl2 = "../LumiNosity/lvl2.dat", objslvl3 = "../LumiNosity/lvl3.dat";
     int semilla = 7;
     bool write = true;
     contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0;
-    info1 = decodeTxt(semilla,objslvl1);
-    if(info1[0] == ',' && info1[1] == '0' && info1[2] == '0') write = false;
-    codeTxt(semilla,objslvl1, write);
-    info1 = decodeTxt(semilla,objslvl1);
+    if(actualLvl == 1){
+        info1 = decodeTxt(semilla,objslvl1);
+        if(info1[0] == ',' && info1[1] == '0' && info1[2] == '0') write = false;
+        codeTxt(semilla,objslvl1, write);
+        info1 = decodeTxt(semilla,objslvl1);
+    }
+    else if(actualLvl == 2){
+        info1 = decodeTxt(semilla,objslvl2);
+        if(info1[0] == ',' && info1[1] == '0' && info1[2] == '0') write = false;
+        codeTxt(semilla,objslvl2, write);
+        info1 = decodeTxt(semilla,objslvl2);
+        contChargers = 0;
+    }
+    else if(actualLvl == 3){
+        info1 = decodeTxt(semilla,objslvl1);
+        if(info1[0] == ',' && info1[1] == '0' && info1[2] == '0') write = false;
+        codeTxt(semilla,objslvl1, write);
+        info1 = decodeTxt(semilla,objslvl1);
+        contChargers = 0;
+    }
     for(int i=0; i<int(info1.length()); i++){
         if(info1[i] == ','){
             subinfo1.push_back(info1[i+1]);
@@ -97,17 +116,28 @@ void MainWindow::setupObjectslvl1()
             else if(data>=50 && data<=54){
                 contButts++;
             }
-            else if(data==97){
+            else if(data==97 || (data>=70 && data<=72)){
                 contSierras++;
             }
             else if(data==95 || data==92){
                 contCanons+=2;
             }
-            else if(data==94 || data==93){
+            else if(data==94 || data==93 || data==83 || data==82){
                 contPlats++;
+            }
+            else if(actualLvl > 1){
+                if(data==60){
+                    contChargers++;
+                }
             }
             subinfo1.clear();
         }
+    }
+    bombilla = new bulb(tam,tam);
+    if(actualLvl > 1){
+        cargador = new chargers*[contChargers];
+        for(int i=0; i<contChargers; i++) cargador[i] = new chargers(tam,tam);
+        contChargers = 0;
     }
     mapa = new obstacles*[contObs];
     for(int i=0; i<contObs; i++)    mapa[i] = new obstacles(tam,tam);
@@ -145,7 +175,8 @@ void MainWindow::setupObjectslvl1()
                 canWalk = 2;
                 resistor[contResis]->setPos(anch*tam,alt*tam);
                 if(data == 96){
-                    resistor[contResis]->setHasButton(true,assignRes);
+                    if(actualLvl == 1)resistor[contResis]->setHasButton(true,assignRes);
+                    else resistor[contResis]->setHasButton(true,3);
                     assignRes--;
                 }
                 scene->addItem(resistor[contResis]);
@@ -154,13 +185,19 @@ void MainWindow::setupObjectslvl1()
             else if(data>=50 && data <= 54){
                 button[contButts]->setImg((data-50)*4);
                 button[contButts]->setPos(anch*tam,alt*tam);
-                if(contButts<=3) button[contButts]->setNumButton(1);
-                else button[contButts]->setNumButton(2);
+                if(actualLvl == 1){
+                    if(contButts<3) button[contButts]->setNumButton(1);
+                    else button[contButts]->setNumButton(2);
+                }
+                else{
+                    button[contButts]->setNumButton(contButts+1);
+                }
                 scene->addItem(button[contButts]);
                 contButts++;
             }
-            else if(data==97){
+            else if(data==97 || (data>=70 && data<=72)){
                 sierra[contSierras]->setPos(anch*tam,alt*tam);
+                if(data>=70 && data<=72) sierra[contSierras]->setTypeMov(data-69);
                 scene->addItem(sierra[contSierras]);
                 contSierras++;
             }
@@ -180,8 +217,12 @@ void MainWindow::setupObjectslvl1()
                 }
                 contCanons+=2;
             }
-            else if(data<=94 && data>= 93){
-                plat1[contPlats]->setImg((data-93)*2);
+            else if(data==94 || data==93 || data==83 || data==82){
+                if(data >90) plat1[contPlats]->setImg((data-93)*2);
+                else if(data == 83 || data == 82){
+                    plat1[contPlats]->setAllowMov(0);
+                    plat1[contPlats]->setImg(2);
+                }
                 plat1[contPlats]->setPos(anch*tam,alt*tam);
                 contPlats++;
             }
@@ -189,6 +230,14 @@ void MainWindow::setupObjectslvl1()
                 bombilla->setImg(0);
                 bombilla->setPos(anch*tam,alt*tam);
                 scene->addItem(bombilla);
+            }
+            else if(actualLvl > 1){
+                if(data == 60){
+                    cargador[contChargers]->setPos(anch*tam,alt*tam);
+                    cargador[contChargers]->setImg(0);
+                    scene->addItem(cargador[contChargers]);
+                    contChargers++;
+                }
             }
             subinfo1.clear();
             lvl1[alt][anch] = canWalk;
@@ -249,12 +298,43 @@ void MainWindow::nextLvl()
     prot2->setPos(tam*(ancho-2),tam*(alto-2));
     prot1->setEnergy(3);
     prot2->setEnergy(3);
-    delete []mapa;
-    delete []button;
-    delete []plat1;
-    delete []sierra;
-    delete []resistor;
-    delete []canion;
+    for(int i=0; i<contObs; i++){
+        scene->removeItem(mapa[i]);
+        if(i<6) scene->removeItem(energy[i]);
+        if(i<contCanons) scene->removeItem(canion[i]);
+        if(i<contButts) scene->removeItem(button[i]);
+        if(i<contResis) scene->removeItem(resistor[i]);
+        if(i<contSierras) scene->removeItem(sierra[i]);
+        if(i<contPlats) scene->removeItem(plat1[i]);
+        if(i<contChargers) scene->removeItem(cargador[i]);
+    }
+    scene->removeItem(ball);
+    scene->removeItem(ball2);
+    scene->removeItem(prot1);
+    scene->removeItem(prot2);
+    scene->removeItem(bombilla);
+    delete timeMovProta;
+    delete timeSimuls;
+    delete ball;
+    delete ball2;
+    delete bombilla;
+    delete [] mapa;
+    delete [] energy;
+    delete [] canion;
+    delete [] resistor;
+    delete [] sierra;
+    delete [] plat1;
+    if(contChargers >= 0) delete [] cargador;
+    delete [] button;
+    delete prot1;
+    delete prot2;
+    canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
+    movY = 0, movY2 = 0;
+    string newInfo;
+    newInfo.append("lny9");
+    newInfo.push_back(actualLvl+48);
+    newInfo.push_back(lives+48);
+    codeTxt(7,newInfo);
     setupMapa();
     switch(QMessageBox::question(
         this,
@@ -264,10 +344,7 @@ void MainWindow::nextLvl()
     QMessageBox::Yes | QMessageBox::No))
     {
     case QMessageBox::Yes:
-            lives = 3;
             bombilla->setImg(0);
-            canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
-            movY = 0, movY2 = 0;
             break;
     case QMessageBox::No:
         this->close();
@@ -297,12 +374,49 @@ bool MainWindow::evalEnergy(bool isProt1, int modify)
         prot2->setPos(tam*(ancho-2),tam*(alto-2));
         prot1->setEnergy(3);
         prot2->setEnergy(3);
-        delete []mapa;
-        delete []button;
-        delete []plat1;
-        delete []sierra;
-        delete []resistor;
-        delete []canion;
+        for(int i=0; i<contObs; i++){
+            scene->removeItem(mapa[i]);
+            if(i<6) scene->removeItem(energy[i]);
+            if(i<contCanons) scene->removeItem(canion[i]);
+            if(i<contButts) scene->removeItem(button[i]);
+            if(i<contResis) scene->removeItem(resistor[i]);
+            if(i<contSierras) scene->removeItem(sierra[i]);
+            if(i<contPlats) scene->removeItem(plat1[i]);
+            if(i<contChargers) scene->removeItem(cargador[i]);
+        }
+        scene->removeItem(ball);
+        scene->removeItem(ball2);
+        scene->removeItem(prot1);
+        scene->removeItem(prot2);
+        scene->removeItem(bombilla);
+        delete timeMovProta;
+        delete timeSimuls;
+        delete ball;
+        delete ball2;
+        delete bombilla;
+        delete [] mapa;
+        delete [] energy;
+        delete [] canion;
+        delete [] resistor;
+        delete [] sierra;
+        delete [] plat1;
+        if(contChargers >= 0) delete [] cargador;
+        delete [] button;
+        delete prot1;
+        delete prot2;
+        canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
+        movY = 0, movY2 = 0;
+        string newInfo;
+        if(lives == 0){
+            actualLvl = 1;
+            newInfo = "lny913";
+        }
+        else{
+            newInfo.append("lny9");
+            newInfo.push_back(actualLvl+48);
+            newInfo.push_back(lives+48);
+        }
+        codeTxt(7,newInfo);
         setupMapa();
         if(lives == 0){
                 switch(QMessageBox::question(
@@ -314,8 +428,6 @@ bool MainWindow::evalEnergy(bool isProt1, int modify)
                 {
                 case QMessageBox::Yes:
                         lives = 3;
-                        canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
-                        movY = 0, movY2 = 0;
                         break;
                 case QMessageBox::No:
                     this->close();
@@ -325,6 +437,22 @@ bool MainWindow::evalEnergy(bool isProt1, int modify)
         return true;
     }
     return false;
+}
+
+bool MainWindow::codeTxt(int semilla, string content)
+{
+    bool result=true;
+    string texto,binario;
+    try {
+        texto=content;
+        binario=text2bin(texto);
+        binario=reglas_codifica(binario,semilla,true);
+        texto=bin2text(binario);
+        escribir(texto,"../LumiNosity/sudo.dat",false);
+    }  catch (...) {
+        result=false;
+    }
+    return result;
 }
 
 bool MainWindow::codeTxt(int semilla, string n_archivo, bool first)
@@ -365,30 +493,28 @@ void MainWindow::animProta()
     prot1->setAnim(0);
     prot2->setAnim(1);
     for(int i=0; i<contPlats; i++){
-        int dir = plat1[i]->getDir();
-        if(plat1[i]->getTipo()==0){
-            for(int i2=0; i2<contObs; i2++){
-                if(mapa[i2]->getTipo() == 0 && mapa[i2]->x() == plat1[i]->x()+qreal(5*dir)){
-                    dir = dir*(-1);
-                    break;
+        if(plat1[i]->getAllowMov() >= 1){
+            int dir = plat1[i]->getDir(), dist = plat1[i]->getAllowMov();
+            if(plat1[i]->getTipo()==0){
+                if(plat1[i]->getCountToChange() >= tam*3/5-2){
+                    plat1[i]->setCountToChange(0);
+                    plat1[i]->setDir(dir*(-1));
                 }
+                plat1[i]->setPos(plat1[i]->x()+5*dir*dist,plat1[i]->y());
+                if(abs(dir)==double(dir)) plat1[i]->setImg(0);
+                else plat1[i]->setImg(1);
             }
-            plat1[i]->setPos(plat1[i]->x()+5*dir,plat1[i]->y());
-            if(abs(dir)==double(dir)) plat1[i]->setImg(0);
-            else plat1[i]->setImg(1);
-        }
-        else{
-            for(int i2=0; i2<contObs; i2++){
-                if(mapa[i2]->getTipo() == 0 && mapa[i2]->y() == plat1[i]->y()+qreal(5*dir)){
-                    dir = dir*(-1);
-                    break;
+            else{
+                if(plat1[i]->getCountToChange() >= tam*3/5-2){
+                    plat1[i]->setCountToChange(0);
+                    plat1[i]->setDir(dir*(-1));
                 }
+                plat1[i]->setPos(plat1[i]->x(),plat1[i]->y()+5*dir*dist);
+                if(abs(dir)==double(dir)) plat1[i]->setImg(2);
+                else plat1[i]->setImg(3);
             }
-            plat1[i]->setPos(plat1[i]->x(),plat1[i]->y()+5*dir);
-            if(abs(dir)==double(dir)) plat1[i]->setImg(2);
-            else plat1[i]->setImg(3);
+            plat1[i]->setCountToChange(plat1[i]->getCountToChange()+1);
         }
-        plat1[i]->setDir(dir);
     }
     for(int i=0; i<contButts; i++){
         if(button[i]->getStartAnim()){
@@ -408,7 +534,7 @@ void MainWindow::simul()
         y1 = ball->getY0()+ball->getVy0()*ball->getN()*0.007*T-0.5*g*ball->getN()*0.007*T*ball->getN()*0.007*T;
         ball->setPos(int(x1),int(h-y1-ball->getHeight()));
         ball->setN(ball->getN()+1);
-        for(int i=149; i<contObs;i++){
+        for(int i=120; i<contObs;i++){
             if(mapa[i]->getTipo() == 0){
                 if(mapa[i]->collidesWithItem(ball)){
                     ball->setActivate(false);
@@ -435,7 +561,8 @@ void MainWindow::simul()
                 button[i]->setStartAnim(true);
                 for(int i2=0; i2<contResis; i2++){
                     if(resistor[i2]->getHasButton() && resistor[i2]->getNumButton() == button[i]->getNumButton()){
-                        resistor[i2]->replace(1+resistor[i2]->getNumButton());
+                        if(actualLvl == 1) resistor[i2]->replace(1+resistor[i2]->getNumButton());
+                        else if(actualLvl == 2) resistor[i2]->replace(3);
                         lvl1[int(resistor[i2]->y())/tam][int(resistor[i2]->x())/tam] = 1;
                     }
                 }
@@ -505,16 +632,25 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
                 canion[elCanon1-1]->setImg(0,false);
                 ui->barCanon1->hide();
             }
-            sceneScale1();
+            if(actualLvl == 1) sceneScale1();
         }
         else if(bombilla->x()-prot1->x() <= tam && bombilla->y()-prot1->y() <= tam){
             bulb1 = !bulb1;
             prot1->setVisible(!prot1->isVisible());
             if(prot2->isVisible() && bulb1) bombilla->setImg(1);
             else if(prot2->isVisible() && !bulb1) bombilla->setImg(0);
-            else if(!prot2->isVisible() && bulb1) bombilla->setImg(2);
+            else if(!prot2->isVisible() && bulb1 && bombilla->x()-prot2->x() <= tam && bombilla->y()-prot2->y() <= tam) bombilla->setImg(2);
+            else bombilla->setImg(1);
             if(bombilla->getTipo() == 2){
                 nextLvl();
+            }
+        }
+        else if(actualLvl > 1){
+            for(int i=0; i<contChargers; i++){
+                if(cargador[i]->x()-prot1->x() <= tam && cargador[i]->y()-prot1->y() <= tam){
+                    if(cargador[i]->getTipo() == 0) cargador[i]->setImg(1);
+                    else cargador[i]->setImg(2);
+                }
             }
         }
     }
@@ -540,9 +676,18 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
             prot2->setVisible(!prot2->isVisible());
             if(prot1->isVisible() && bulb2) bombilla->setImg(1);
             else if(prot1->isVisible() && !bulb2) bombilla->setImg(0);
-            else if(!prot1->isVisible() && bulb2) bombilla->setImg(2);
+            else if(!prot1->isVisible() && bulb2 && bombilla->x()-prot1->x() <= tam && bombilla->y()-prot1->y() <= tam) bombilla->setImg(2);
+            else bombilla->setImg(1);
             if(bombilla->getTipo() == 2){
                 nextLvl();
+            }
+        }
+        else if(actualLvl > 1){
+            for(int i=0; i<contChargers; i++){
+                if(cargador[i]->x()-prot2->x() <= tam && cargador[i]->y()-prot2->y() <= tam){
+                    if(cargador[i]->getTipo() == 0) cargador[i]->setImg(1);
+                    else cargador[i]->setImg(2);
+                }
             }
         }
     }
@@ -772,6 +917,28 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
 
 void MainWindow::on_newGame_clicked()
 {
+    setupMapa();
+    ui->newGame->hide();
+    ui->newGame->setEnabled(false);
+    ui->loadGame->hide();
+    ui->loadGame->setEnabled(false);
+    ui->exit->hide();
+    ui->exit->setEnabled(false);
+}
+
+
+void MainWindow::on_loadGame_clicked()
+{
+    string linkInfo = "../LumiNosity/sudo.dat", getInfo;
+    int semilla = 7;
+    bool write = true;
+    getInfo = decodeTxt(semilla,linkInfo);
+    if(getInfo[0] == 'l' && getInfo[1] == 'n' && getInfo[2] == 'y' && getInfo[3] == '9') write = false;
+    codeTxt(semilla,linkInfo,write);
+    getInfo = decodeTxt(semilla,linkInfo);
+    actualLvl = getInfo[4]-48;
+    lives = getInfo[5]-48;
+    setupMapa();
     ui->newGame->hide();
     ui->newGame->setEnabled(false);
     ui->loadGame->hide();

@@ -31,3 +31,23 @@ void movilPlat::setDir(int direction)
 {
     dir = direction;
 }
+
+void movilPlat::setCountToChange(int count)
+{
+    countToChange = count;
+}
+
+int movilPlat::getCountToChange()
+{
+    return countToChange;
+}
+
+int movilPlat::getAllowMov()
+{
+    return allowMov;
+}
+
+void movilPlat::setAllowMov(int allow)
+{
+    allowMov = allow;
+}

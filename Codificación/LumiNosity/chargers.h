@@ -8,7 +8,12 @@
 class chargers: public QObject, public QGraphicsPixmapItem //Cargador
 {
 public:
-    chargers();
+    chargers(int width, int height);
+    void setImg(int type);
+    int getTipo();
+private:
+    QPixmap charged, low, medium;
+    int w,h, tipo = 0;
 };
 
 #endif // CHARGERS_H

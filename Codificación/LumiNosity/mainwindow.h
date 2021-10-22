@@ -39,12 +39,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     void keyPressEvent(QKeyEvent *key);
     ~MainWindow();
-    void setupWindow();
+    void setupWindow(bool isInitMenu);
     void setupMapa();
     void setupObjectslvl1();
+    void setupObjectslvl2();
     void sceneScale1();
     void nextLvl();
     bool evalEnergy(bool isProt1, int modify);
+    bool codeTxt(int semilla, string content);
     bool codeTxt(int semilla,string n_archivo, bool first);
     string decodeTxt(int semilla, string n_archivo);
 public slots:
@@ -53,6 +55,8 @@ public slots:
 
 private slots:
     void on_newGame_clicked();
+
+    void on_loadGame_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -66,11 +70,12 @@ private:
     chargers **cargador;
     canonBall *ball, *ball2;
     canon **canion;
-    QGraphicsScene *scene;
+    QGraphicsScene *scene, *scene2;
     QByteArray geoCan1, geoCan2;
     QTimer *timeMovProta, *timeSimuls;
     short int lvl1[alto][ancho];
     int actualLvl = 1;
+    int contChargers = -1;
     int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0, lives = 3, T = 50, movY = 0, movY2 = 0;
     double scaleFactor = 0.625;
     bool canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
