@@ -98,11 +98,12 @@ void MainWindow::setupObjectslvl1()
         scaleFactor = 0.8;
     }
     else if(actualLvl == 3){
-        info1 = decodeTxt(semilla,objslvl1);
+        info1 = decodeTxt(semilla,objslvl3);
         if(info1[0] == ',' && info1[1] == '0' && info1[2] == '0') write = false;
-        codeTxt(semilla,objslvl1, write);
-        info1 = decodeTxt(semilla,objslvl1);
+        codeTxt(semilla,objslvl3, write);
+        info1 = decodeTxt(semilla,objslvl3);
         contChargers = 0;
+        scaleFactor = 0.8;
     }
     for(int i=0; i<int(info1.length()); i++){
         if(info1[i] == ','){
@@ -132,7 +133,7 @@ void MainWindow::setupObjectslvl1()
                 contPlats++;
             }
             else if(actualLvl > 1){
-                if(data==60){
+                if(data==60 || data==61){
                     contChargers++;
                 }
             }
@@ -272,7 +273,7 @@ void MainWindow::setupObjectslvl1()
                 scene->addItem(bombilla);
             }
             else if(actualLvl > 1){
-                if(data == 60){
+                if(data == 60 || data == 61){
                     cargador[contChargers]->setPos(anch*tam,alt*tam);
                     cargador[contChargers]->setImg(0);
                     scene->addItem(cargador[contChargers]);
