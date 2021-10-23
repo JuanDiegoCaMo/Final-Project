@@ -51,3 +51,44 @@ void movilPlat::setAllowMov(int allow)
 {
     allowMov = allow;
 }
+
+int movilPlat::getNumBut()
+{
+    return numBut;
+}
+
+void movilPlat::setNumBut(int but)
+{
+    numBut = but;
+}
+
+bool movilPlat::getTrigger()
+{
+    return trigger;
+}
+
+void movilPlat::setTrigger(bool trig)
+{
+    trigger = trig;
+}
+
+qreal movilPlat::getOriginX()
+{
+    return originX;
+}
+
+qreal movilPlat::getOriginY()
+{
+    return originY;
+}
+
+void movilPlat::setOriginY(qreal _y)
+{
+    originY = _y;
+}
+
+void movilPlat::setOriginX(qreal _x)
+{
+    originX = _x;
+}
+

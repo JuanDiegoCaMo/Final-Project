@@ -17,6 +17,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete timeMovProta;
     delete timeSimuls;
+    delete timeSimulsSierra;
     delete ball;
     delete ball2;
     delete bombilla;
@@ -60,9 +61,12 @@ void MainWindow::setupMapa()
     timeMovProta = new QTimer;
     timeMovProta->start(75);
     timeSimuls = new QTimer;
+    timeSimulsSierra = new QTimer;
+    timeSimulsSierra->start(T);
 
-    connect(timeMovProta,SIGNAL(timeout()),this,SLOT(animProta()));
+    connect(timeMovProta,SIGNAL(timeout()),this,SLOT(anim()));
     connect(timeSimuls,SIGNAL(timeout()),this,SLOT(simul()));
+    connect(timeSimulsSierra,SIGNAL(timeout()),this,SLOT(simulSierras()));
 
     scene->addItem(prot1);
     scene->addItem(prot2);
@@ -83,6 +87,7 @@ void MainWindow::setupObjectslvl1()
         if(info1[0] == ',' && info1[1] == '0' && info1[2] == '0') write = false;
         codeTxt(semilla,objslvl1, write);
         info1 = decodeTxt(semilla,objslvl1);
+        scaleFactor = 0.625;
     }
     else if(actualLvl == 2){
         info1 = decodeTxt(semilla,objslvl2);
@@ -90,6 +95,7 @@ void MainWindow::setupObjectslvl1()
         codeTxt(semilla,objslvl2, write);
         info1 = decodeTxt(semilla,objslvl2);
         contChargers = 0;
+        scaleFactor = 0.8;
     }
     else if(actualLvl == 3){
         info1 = decodeTxt(semilla,objslvl1);
@@ -116,7 +122,7 @@ void MainWindow::setupObjectslvl1()
             else if(data>=50 && data<=54){
                 contButts++;
             }
-            else if(data==97 || (data>=70 && data<=72)){
+            else if(data==97 || (data>=70 && data<=71)){
                 contSierras++;
             }
             else if(data==95 || data==92){
@@ -176,7 +182,7 @@ void MainWindow::setupObjectslvl1()
                 resistor[contResis]->setPos(anch*tam,alt*tam);
                 if(data == 96){
                     if(actualLvl == 1)resistor[contResis]->setHasButton(true,assignRes);
-                    else resistor[contResis]->setHasButton(true,3);
+                    else if(actualLvl == 2) resistor[contResis]->setHasButton(true,2);
                     assignRes--;
                 }
                 scene->addItem(resistor[contResis]);
@@ -189,16 +195,31 @@ void MainWindow::setupObjectslvl1()
                     if(contButts<3) button[contButts]->setNumButton(1);
                     else button[contButts]->setNumButton(2);
                 }
-                else{
+                else if(actualLvl == 2){
                     button[contButts]->setNumButton(contButts+1);
                 }
                 scene->addItem(button[contButts]);
                 contButts++;
             }
-            else if(data==97 || (data>=70 && data<=72)){
+            else if(data==97 || (data>=70 && data<=71)){
                 sierra[contSierras]->setPos(anch*tam,alt*tam);
-                if(data>=70 && data<=72) sierra[contSierras]->setTypeMov(data-69);
-                scene->addItem(sierra[contSierras]);
+                if(data>=70 && data<=71){
+                    sierra[contSierras]->setTypeMov(data-69);
+                    if(actualLvl == 2){
+                        sierra[contSierras]->setCenterX(long(sierra[contSierras]->x()));
+                        if(contSierras == 0 || contSierras == 5){
+                            sierra[contSierras]->setCenterY(long(sierra[contSierras]->y())+2*tam);
+                            sierra[contSierras]->setInitAng(90*M_PI/180);
+                        }
+                        else if(contSierras == 4 || contSierras == 9){
+                            sierra[contSierras]->setCenterY(long(sierra[contSierras]->y())-tam);
+                            sierra[contSierras]->setInitAng(-90*M_PI/180);
+                        }
+                        sierra[contSierras]->setA(2*tam);
+                        sierra[contSierras]->setB(2*tam);
+                        sierra[contSierras]->setVelAng(2*M_PI/periodo);
+                    }
+                }
                 contSierras++;
             }
             else if(data==95 || data==92){
@@ -218,12 +239,31 @@ void MainWindow::setupObjectslvl1()
                 contCanons+=2;
             }
             else if(data==94 || data==93 || data==83 || data==82){
+                plat1[contPlats]->setAllowMov(3);
                 if(data >90) plat1[contPlats]->setImg((data-93)*2);
                 else if(data == 83 || data == 82){
                     plat1[contPlats]->setAllowMov(0);
+                    plat1[contPlats]->setDir(-1);
                     plat1[contPlats]->setImg(2);
+                    if(data == 83){
+                        plat1[contPlats]->setDir(1);
+                        plat1[contPlats]->setImg(3);
+                    }
+                }
+                if(actualLvl == 2){
+                    if(contPlats==0 || contPlats==4){
+                        plat1[contPlats]->setNumBut(1);
+                    }
+                    else if(contPlats==3 || contPlats==7){
+                        plat1[contPlats]->setNumBut(3);
+                    }
+                    else{
+                        plat1[contPlats]->setNumBut(2);
+                    }
                 }
                 plat1[contPlats]->setPos(anch*tam,alt*tam);
+                plat1[contPlats]->setOriginY(plat1[contPlats]->y());
+                plat1[contPlats]->setOriginX(plat1[contPlats]->x());
                 contPlats++;
             }
             else if(data==98){
@@ -264,6 +304,7 @@ void MainWindow::setupObjectslvl1()
         else    energy[i]->setPos(ancho*tam-(i-3)*tam-tam,0);
         scene->addItem(energy[i]);
     }
+    for(int i=0; i<contSierras; i++) scene->addItem(sierra[i]);
 }
 
 void MainWindow::sceneScale1()
@@ -279,6 +320,27 @@ void MainWindow::sceneScale1()
     else{
         if(scaleFactor == 1.6) {
             scaleFactor = 0.625;
+            ui->graphicsView->scale(scaleFactor,scaleFactor);
+            ui->graphicsView->setSceneRect(0,0,tam*ancho,tam*alto);
+            ui->barCanon1->restoreGeometry(geoCan1);
+            ui->barCanon2->restoreGeometry(geoCan2);
+        }
+    }
+}
+
+void MainWindow::sceneScale2()
+{
+    if(!prot1->isVisible() && !prot2->isVisible() && scaleFactor == 0.8){
+        ui->graphicsView->setSceneRect(tam*7,tam*4,tam*19,tam*12);
+        scaleFactor = 1.25;
+        ui->graphicsView->scale(scaleFactor,scaleFactor);
+
+        ui->barCanon1->setGeometry(int(prot1->x())-9*tam/5,int(prot1->y())-tam/4,9*tam/4,tam/3);
+        ui->barCanon2->setGeometry(int(prot2->x())+7*tam/10,int(prot2->y())+tam/4,9*tam/4,tam/3);
+    }
+    else{
+        if(scaleFactor == 1.25) {
+            scaleFactor = 0.8;
             ui->graphicsView->scale(scaleFactor,scaleFactor);
             ui->graphicsView->setSceneRect(0,0,tam*ancho,tam*alto);
             ui->barCanon1->restoreGeometry(geoCan1);
@@ -315,6 +377,7 @@ void MainWindow::nextLvl()
     scene->removeItem(bombilla);
     delete timeMovProta;
     delete timeSimuls;
+    delete timeSimulsSierra;
     delete ball;
     delete ball2;
     delete bombilla;
@@ -330,6 +393,7 @@ void MainWindow::nextLvl()
     delete prot2;
     canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
     movY = 0, movY2 = 0;
+    if(actualLvl == 2) scaleFactor = 0.8;
     string newInfo;
     newInfo.append("lny9");
     newInfo.push_back(actualLvl+48);
@@ -391,6 +455,7 @@ bool MainWindow::evalEnergy(bool isProt1, int modify)
         scene->removeItem(bombilla);
         delete timeMovProta;
         delete timeSimuls;
+        delete timeSimulsSierra;
         delete ball;
         delete ball2;
         delete bombilla;
@@ -410,6 +475,7 @@ bool MainWindow::evalEnergy(bool isProt1, int modify)
         if(lives == 0){
             actualLvl = 1;
             newInfo = "lny913";
+            scaleFactor = 0.625;
         }
         else{
             newInfo.append("lny9");
@@ -488,7 +554,7 @@ string MainWindow::decodeTxt(int semilla, string n_archivo)
 }
 
 
-void MainWindow::animProta()
+void MainWindow::anim()
 {
     prot1->setAnim(0);
     prot2->setAnim(1);
@@ -496,22 +562,22 @@ void MainWindow::animProta()
         if(plat1[i]->getAllowMov() >= 1){
             int dir = plat1[i]->getDir(), dist = plat1[i]->getAllowMov();
             if(plat1[i]->getTipo()==0){
-                if(plat1[i]->getCountToChange() >= tam*3/5-2){
+                if(plat1[i]->getCountToChange() >= tam/2-2){
                     plat1[i]->setCountToChange(0);
                     plat1[i]->setDir(dir*(-1));
                 }
-                plat1[i]->setPos(plat1[i]->x()+5*dir*dist,plat1[i]->y());
+                plat1[i]->setPos(plat1[i]->x()+2*dir*dist,plat1[i]->y());
                 if(abs(dir)==double(dir)) plat1[i]->setImg(0);
                 else plat1[i]->setImg(1);
             }
             else{
-                if(plat1[i]->getCountToChange() >= tam*3/5-2){
+                if(plat1[i]->getCountToChange() >= tam/2-2){
                     plat1[i]->setCountToChange(0);
                     plat1[i]->setDir(dir*(-1));
                 }
-                plat1[i]->setPos(plat1[i]->x(),plat1[i]->y()+5*dir*dist);
-                if(abs(dir)==double(dir)) plat1[i]->setImg(2);
-                else plat1[i]->setImg(3);
+                plat1[i]->setPos(plat1[i]->x(),plat1[i]->y()+2*dir*dist);
+                if(abs(dir)==double(dir)) plat1[i]->setImg(3);
+                else plat1[i]->setImg(2);
             }
             plat1[i]->setCountToChange(plat1[i]->getCountToChange()+1);
         }
@@ -522,6 +588,9 @@ void MainWindow::animProta()
         }
     }
     for(int i=0; i<contSierras; i++) sierra[i]->setAnim();
+    if(bombilla->getTipo() == 2){
+        nextLvl();
+    }
 }
 
 void MainWindow::simul()
@@ -566,6 +635,14 @@ void MainWindow::simul()
                         lvl1[int(resistor[i2]->y())/tam][int(resistor[i2]->x())/tam] = 1;
                     }
                 }
+                for(int i3=0; i3<contPlats; i3++){
+                    if(plat1[i3]->getNumBut() != 0 && plat1[i3]->getNumBut() == button[i]->getNumButton()){
+                        if(!plat1[i3]->getTrigger()){
+                            plat1[i3]->setTrigger(true);
+                            plat1[i3]->setAllowMov(2);
+                        }
+                    }
+                }
             }
         }
     }
@@ -602,8 +679,17 @@ void MainWindow::simul()
                 button[i]->setStartAnim(true);
                 for(int i2=0; i2<contResis; i2++){
                     if(resistor[i2]->getHasButton() && resistor[i2]->getNumButton() == button[i]->getNumButton()){
-                        resistor[i2]->replace(1+resistor[i2]->getNumButton());
+                        if(actualLvl == 1) resistor[i2]->replace(1+resistor[i2]->getNumButton());
+                        else if(actualLvl == 2) resistor[i2]->replace(3);
                         lvl1[int(resistor[i2]->y())/tam][int(resistor[i2]->x())/tam] = 1;
+                    }
+                }
+                for(int i3=0; i3<contPlats; i3++){
+                    if(plat1[i3]->getNumBut() != 0 && plat1[i3]->getNumBut() == button[i]->getNumButton()){
+                        if(!plat1[i3]->getTrigger()){
+                            plat1[i3]->setTrigger(true);
+                            plat1[i3]->setAllowMov(2);
+                        }
                     }
                 }
             }
@@ -611,6 +697,21 @@ void MainWindow::simul()
     }
     else if(!ball->getActivate() && !ball2->getActivate()){
         timeSimuls->stop();
+    }
+}
+
+void MainWindow::simulSierras()
+{
+    for(int i=0; i<contSierras; i++){
+        if(sierra[i]->getTypeMov() == 1){ //MCU or Mov Elip Unif
+            sierra[i]->setX(sierra[i]->getA()*cos(sierra[i]->getVelAng()*sierra[i]->getCounter()*T+sierra[i]->getInitAng()+sierra[i]->getVelAng()*T)+sierra[i]->getCenterX());
+            sierra[i]->setY(sierra[i]->getB()*sin(sierra[i]->getVelAng()*sierra[i]->getCounter()*T+sierra[i]->getInitAng()+sierra[i]->getVelAng()*T)+sierra[i]->getCenterY());
+            sierra[i]->setCounter(sierra[i]->getCounter()+1);
+            if(sierra[i]->getCounter() >= periodo/T) sierra[i]->setCounter(0);
+        }
+        else if(sierra[i]->getTypeMov() == 2){ //Mov Pendular
+
+        }
     }
 }
 
@@ -633,23 +734,40 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
                 ui->barCanon1->hide();
             }
             if(actualLvl == 1) sceneScale1();
+            else if(actualLvl == 2) sceneScale2();
         }
-        else if(bombilla->x()-prot1->x() <= tam && bombilla->y()-prot1->y() <= tam){
+        else if(qFabs(bombilla->x()-prot1->x()) <= tam && qFabs(bombilla->y()-prot1->y()) <= tam){
             bulb1 = !bulb1;
             prot1->setVisible(!prot1->isVisible());
-            if(prot2->isVisible() && bulb1) bombilla->setImg(1);
-            else if(prot2->isVisible() && !bulb1) bombilla->setImg(0);
-            else if(!prot2->isVisible() && bulb1 && bombilla->x()-prot2->x() <= tam && bombilla->y()-prot2->y() <= tam) bombilla->setImg(2);
-            else bombilla->setImg(1);
-            if(bombilla->getTipo() == 2){
-                nextLvl();
-            }
+            if(bulb1 && (!(qFabs(bombilla->x()-prot2->x()) <= tam && qFabs(bombilla->y()-prot2->y()) <= tam) || prot2->isVisible())) bombilla->setImg(1);
+            else if(!bulb1 && (!(qFabs(bombilla->x()-prot2->x()) <= tam && qFabs(bombilla->y()-prot2->y()) <= tam) || prot2->isVisible())) bombilla->setImg(0);
+            else if(bulb1 && (qFabs(bombilla->x()-prot2->x()) <= tam && qFabs(bombilla->y()-prot2->y()) <= tam && !prot2->isVisible())) bombilla->setImg(2);
         }
         else if(actualLvl > 1){
             for(int i=0; i<contChargers; i++){
-                if(cargador[i]->x()-prot1->x() <= tam && cargador[i]->y()-prot1->y() <= tam){
-                    if(cargador[i]->getTipo() == 0) cargador[i]->setImg(1);
-                    else cargador[i]->setImg(2);
+                if(qFabs(cargador[i]->x()-prot1->x()) <= tam && qFabs(cargador[i]->y()-prot1->y()) <= tam){
+                    if(cargador[i]->getTipo() == 0){
+                        if(actualLvl == 2){
+                            for(int i2=0; i2<contPlats;i2++){
+                                if((i2>=1 && i2<=2) || (i2>=5 && i2<=6)) plat1[i2]->setAllowMov(1);
+                            }
+                        }
+                        cargador[i]->setImg(1);
+                        cargador[i]->setLastProt(1);
+                    }
+                    else if(cargador[i]->getTipo() == 1 && cargador[i]->getLastProt() != 1){
+                        if(actualLvl == 2){
+                            for(int i2=0; i2<contPlats;i2++){
+                                if((i2>=1 && i2<=2) || (i2>=5 && i2<=6)){
+                                    plat1[i2]->setY(plat1[i2]->getOriginY());
+                                    plat1[i2]->setDir(-1);
+                                    plat1[i2]->setCountToChange(0);
+                                    plat1[i2]->setAllowMov(3);
+                                }
+                            }
+                        }
+                        cargador[i]->setImg(2);
+                    }
                 }
             }
         }
@@ -669,24 +787,41 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
                 canion[elCanon1-1]->setImg(0,false);
                 ui->barCanon2->hide();
             }
-            sceneScale1();
+            if(actualLvl == 1) sceneScale1();
+            else if(actualLvl == 2) sceneScale2();
         }
-        else if(bombilla->x()-prot2->x() <= tam && bombilla->y()-prot2->y() <= tam){
+        else if(qFabs(bombilla->x()-prot2->x()) <= tam && qFabs(bombilla->y()-prot2->y()) <= tam){
             bulb2 = !bulb2;
             prot2->setVisible(!prot2->isVisible());
-            if(prot1->isVisible() && bulb2) bombilla->setImg(1);
-            else if(prot1->isVisible() && !bulb2) bombilla->setImg(0);
-            else if(!prot1->isVisible() && bulb2 && bombilla->x()-prot1->x() <= tam && bombilla->y()-prot1->y() <= tam) bombilla->setImg(2);
-            else bombilla->setImg(1);
-            if(bombilla->getTipo() == 2){
-                nextLvl();
-            }
+            if(bulb2 && (!(qFabs(bombilla->x()-prot1->x()) <= tam && qFabs(bombilla->y()-prot1->y()) <= tam) || prot1->isVisible())) bombilla->setImg(1);
+            else if(!bulb2 && (!(qFabs(bombilla->x()-prot1->x()) <= tam && qFabs(bombilla->y()-prot1->y()) <= tam) || prot1->isVisible())) bombilla->setImg(0);
+            else if(bulb2 && (qFabs(bombilla->x()-prot1->x()) <= tam && qFabs(bombilla->y()-prot1->y()) <= tam && !prot1->isVisible())) bombilla->setImg(2);
         }
         else if(actualLvl > 1){
             for(int i=0; i<contChargers; i++){
-                if(cargador[i]->x()-prot2->x() <= tam && cargador[i]->y()-prot2->y() <= tam){
-                    if(cargador[i]->getTipo() == 0) cargador[i]->setImg(1);
-                    else cargador[i]->setImg(2);
+                if(qFabs(cargador[i]->x()-prot2->x()) <= tam && qFabs(cargador[i]->y()-prot2->y()) <= tam){
+                    if(cargador[i]->getTipo() == 0){
+                        if(actualLvl == 2){
+                            for(int i2=0; i2<contPlats;i2++){
+                                if((i2>=1 && i2<=2) || (i2>=5 && i2<=6)) plat1[i2]->setAllowMov(1);
+                            }
+                        }
+                        cargador[i]->setImg(1);
+                        cargador[i]->setLastProt(2);
+                    }
+                    else if(cargador[i]->getTipo() == 1 && cargador[i]->getLastProt() != 2){
+                        if(actualLvl == 2){
+                            for(int i2=0; i2<contPlats;i2++){
+                                if((i2>=1 && i2<=2) || (i2>=5 && i2<=6)){
+                                    plat1[i2]->setY(plat1[i2]->getOriginY());
+                                    plat1[i2]->setDir(-1);
+                                    plat1[i2]->setCountToChange(0);
+                                    plat1[i2]->setAllowMov(3);
+                                }
+                            }
+                        }
+                        cargador[i]->setImg(2);
+                    }
                 }
             }
         }

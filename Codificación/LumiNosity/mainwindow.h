@@ -44,14 +44,16 @@ public:
     void setupObjectslvl1();
     void setupObjectslvl2();
     void sceneScale1();
+    void sceneScale2();
     void nextLvl();
     bool evalEnergy(bool isProt1, int modify);
     bool codeTxt(int semilla, string content);
     bool codeTxt(int semilla,string n_archivo, bool first);
     string decodeTxt(int semilla, string n_archivo);
 public slots:
-    void animProta();
+    void anim();
     void simul();
+    void simulSierras();
 
 private slots:
     void on_newGame_clicked();
@@ -72,10 +74,11 @@ private:
     canon **canion;
     QGraphicsScene *scene, *scene2;
     QByteArray geoCan1, geoCan2;
-    QTimer *timeMovProta, *timeSimuls;
+    QTimer *timeMovProta, *timeSimuls, *timeSimulsSierra;
     short int lvl1[alto][ancho];
     int actualLvl = 1;
     int contChargers = -1;
+    int periodo = 3000;
     int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0, lives = 3, T = 50, movY = 0, movY2 = 0;
     double scaleFactor = 0.625;
     bool canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;

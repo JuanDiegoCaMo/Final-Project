@@ -22,3 +22,13 @@ int chargers::getTipo()
 {
     return tipo;
 }
+
+int chargers::getLastProt()
+{
+    return lastProt;
+}
+
+void chargers::setLastProt(int last)
+{
+    lastProt = last;
+}

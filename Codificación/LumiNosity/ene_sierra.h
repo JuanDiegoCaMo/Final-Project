@@ -13,11 +13,28 @@ public:
     void setAnim();
     int getTypeMov();
     void setTypeMov(int typeOfMov);
+    long int getCenterX();
+    long int getCenterY();
+    long int getA();
+    long int getB();
+    long double getVelAng();
+    long double getInitAng();
+    void setCenterX(long int _X);
+    void setCenterY(long int _Y);
+    void setA(long int _A);
+    void setB(long int _B);
+    void setVelAng(long double _W);
+    void setInitAng(long double _Ang);
+    long long int getCounter();
+    void setCounter(long long int counter);
 private:
     QPixmap original, img;
     int w,h, cont=0;
     bool dirAnim = true;
     int typeMov = 0;
+    long double velAng = 0, initAng = 0;
+    long int a = 1, b = 1, centerX = 0, centerY = 0;
+    unsigned long long int n = 0;
 };
 
 #endif // ENE_SIERRA_H
