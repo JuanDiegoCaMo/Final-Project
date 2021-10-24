@@ -9,6 +9,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->barCanon1->hide();
     ui->barCanon2->hide();
+    ui->goNext->hide();
+    ui->goBack->hide();
+    ui->goBack->setEnabled(false);
+    ui->goNext->setEnabled(false);
+    int separation = 100;
+    ui->newGame->setGeometry(tam*ancho/2-221/2,tam*alto/2-separation*3/2,221,43);
+    ui->loadGame->setGeometry(tam*ancho/2-221/2,tam*alto/2-separation*2/2,221,43);
+    ui->exit->setGeometry(tam*ancho/2-221/2,tam*alto/2-separation*1/2,221,43);
+    ui->instruc->setGeometry(tam*ancho/2-401/2,tam*alto/2-separation*0/2,401,43);
     setupWindow(true);
 }
 
@@ -39,7 +48,10 @@ void MainWindow::setupWindow(bool isInitMenu)
     ui->graphicsView->setGeometry(0,0,tam*ancho+2,tam*alto+2);
     scene->setSceneRect(0,0,tam*ancho,tam*alto);
     ui->graphicsView->setScene(scene);
-    if(!isInitMenu) ui->graphicsView->setBackgroundBrush(QBrush(QImage(":/images/Obstaculos/obs_1.png")));
+    QImage background;
+    if(!isInitMenu) background = QImage(":/images/Obstaculos/obs_1.png");
+    else background = QImage(":/images/Instrucciones_BGD/mainMenu.png");
+    ui->graphicsView->setBackgroundBrush(QBrush(background.scaled(tam*ancho,tam*alto)));
     setFixedSize(tam*ancho+2,tam*alto+2);
     setWindowTitle("LumiNosity");
 
@@ -1060,6 +1072,8 @@ void MainWindow::on_newGame_clicked()
     ui->loadGame->setEnabled(false);
     ui->exit->hide();
     ui->exit->setEnabled(false);
+    ui->instruc->hide();
+    ui->instruc->setEnabled(false);
 }
 
 
@@ -1081,5 +1095,85 @@ void MainWindow::on_loadGame_clicked()
     ui->loadGame->setEnabled(false);
     ui->exit->hide();
     ui->exit->setEnabled(false);
+    ui->instruc->hide();
+    ui->instruc->setEnabled(false);
+}
+
+
+void MainWindow::on_exit_clicked()
+{
+    this->close();
+}
+
+
+void MainWindow::on_instruc_clicked()
+{
+    QImage background;
+    if(instrucCount == 0){
+        ui->newGame->hide();
+        ui->newGame->setEnabled(false);
+        ui->loadGame->hide();
+        ui->loadGame->setEnabled(false);
+        ui->exit->hide();
+        ui->exit->setEnabled(false);
+        ui->instruc->hide();
+        ui->instruc->setEnabled(false);
+        ui->goNext->show();
+        ui->goBack->show();
+        ui->goNext->setEnabled(true);
+        ui->goBack->setEnabled(true);
+        ui->graphicsView->setGeometry(0,0,tam*ancho+2,tam*alto+2);
+        setFixedSize(tam*ancho+2,tam*alto+2);
+        setWindowTitle("LumiNosity");
+        background = QImage(":/images/Instrucciones_BGD/controles_0.png");
+        ui->goNext->setGeometry(tam*ancho-13*tam/2,tam*1,221,43);
+        ui->goBack->setGeometry(tam*1,tam*1,221,43);
+    }
+    else if(instrucCount == 5){
+        instrucCount = 0;
+        background = QImage(":/images/Instrucciones_BGD/mainMenu.png");
+    }
+    else if(instrucCount == 1){
+        background = QImage(":/images/Instrucciones_BGD/controles_1.png");
+    }
+    else if(instrucCount == 2){
+        background = QImage(":/images/Instrucciones_BGD/disparos_0.png");
+    }
+    else if(instrucCount == 3){
+        background = QImage(":/images/Instrucciones_BGD/enemigos_0.png");
+    }
+    else if(instrucCount == 4){
+        background = QImage(":/images/Instrucciones_BGD/howtowin_0.png");
+    }
+    background = background.scaled(tam*ancho,tam*alto);
+    ui->graphicsView->setBackgroundBrush(QBrush(background));
+}
+
+
+void MainWindow::on_goNext_clicked()
+{
+    instrucCount++;
+    if(instrucCount == 5){
+        ui->goNext->hide();
+        ui->goBack->hide();
+        ui->goNext->setEnabled(false);
+        ui->goBack->setEnabled(false);
+        ui->newGame->show();
+        ui->newGame->setEnabled(true);
+        ui->loadGame->show();
+        ui->loadGame->setEnabled(true);
+        ui->exit->show();
+        ui->exit->setEnabled(true);
+        ui->instruc->show();
+        ui->instruc->setEnabled(true);
+    }
+    on_instruc_clicked();
+}
+
+
+void MainWindow::on_goBack_clicked()
+{
+    if(instrucCount-1 >= 0) instrucCount--;
+    on_instruc_clicked();
 }
 

@@ -42,7 +42,6 @@ public:
     void setupWindow(bool isInitMenu);
     void setupMapa();
     void setupObjectslvl1();
-    void setupObjectslvl2();
     void sceneScale1();
     void sceneScale2();
     void nextLvl();
@@ -59,6 +58,14 @@ private slots:
     void on_newGame_clicked();
 
     void on_loadGame_clicked();
+
+    void on_exit_clicked();
+
+    void on_instruc_clicked();
+
+    void on_goNext_clicked();
+
+    void on_goBack_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -77,6 +84,7 @@ private:
     QTimer *timeMovProta, *timeSimuls, *timeSimulsSierra;
     short int lvl1[alto][ancho];
     int actualLvl = 1;
+    int instrucCount = 0;
     int contChargers = -1;
     int periodo = 3000;
     int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0, lives = 3, T = 50, movY = 0, movY2 = 0;
