@@ -40,10 +40,13 @@ public:
     void keyPressEvent(QKeyEvent *key);
     ~MainWindow();
     void setupWindow(bool isInitMenu);
-    void setupMapa();
+    void setupMapa(bool deleteTimers);
     void setupObjectslvl1();
+    void changeObjStates(int i);
     void sceneScale1();
     void sceneScale2();
+    void refreshLvl(bool isSameLvl);
+    void deleteAll();
     void nextLvl();
     bool evalEnergy(bool isProt1, int modify);
     bool codeTxt(int semilla, string content);
@@ -53,6 +56,7 @@ public slots:
     void anim();
     void simul();
     void simulSierras();
+    void endgame();
 
 private slots:
     void on_newGame_clicked();
@@ -70,7 +74,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     prota *prot1, *prot2;
-    obstacles **mapa, **energy;
+    obstacles **mapa, **energy,**vidas;
     boton **button;
     bulb *bombilla;
     movilPlat **plat1;
@@ -81,7 +85,7 @@ private:
     canon **canion;
     QGraphicsScene *scene, *scene2;
     QByteArray geoCan1, geoCan2;
-    QTimer *timeMovProta, *timeSimuls, *timeSimulsSierra;
+    QTimer *timeMovProta, *timeSimuls, *timeSimulsSierra, *timeEndGame;
     short int lvl1[alto][ancho];
     int actualLvl = 1;
     int instrucCount = 0;

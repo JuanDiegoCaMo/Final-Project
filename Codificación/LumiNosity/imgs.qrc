@@ -41,5 +41,6 @@
         <file>images/Instrucciones_BGD/enemigos_0.png</file>
         <file>images/Instrucciones_BGD/howtowin_0.png</file>
         <file>images/Instrucciones_BGD/mainMenu.png</file>
+        <file>images/Obstaculos/obs_lives.png</file>
     </qresource>
 </RCC>

@@ -19,6 +19,16 @@ void ene_resistor::setHasButton(bool setButt, int numOfButt)
     numButton = numOfButt;
 }
 
+void ene_resistor::setReplacement(int rep)
+{
+    replacement = rep;
+}
+
+int ene_resistor::getReplacement()
+{
+    return replacement;
+}
+
 int ene_resistor::getNumButton()
 {
     return numButton;

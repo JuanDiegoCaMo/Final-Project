@@ -102,3 +102,13 @@ void ene_sierra::setCounter(long long counter)
 {
     n = counter;
 }
+
+long double ene_sierra::getVelAngMax()
+{
+    return velAngMax;
+}
+
+void ene_sierra::setVelAngMax(long double _WMAX)
+{
+    velAngMax = _WMAX;
+}

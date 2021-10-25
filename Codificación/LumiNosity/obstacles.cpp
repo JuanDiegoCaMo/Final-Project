@@ -7,6 +7,7 @@ obstacles::obstacles(int width, int height)
     original.load(":/images/Obstaculos/obs.png");
     img = original.copy(0,0,32,32);
     energy.load(":/images/Obstaculos/obs_energy.png");
+    lives.load(":/images/Obstaculos/obs_lives.png");
     setPixmap(img.scaled(w,h));
 }
 
@@ -17,9 +18,10 @@ void obstacles::setImg(int type)
     tipo = type;
 }
 
-void obstacles::setImgEnergy()
+void obstacles::setImgAlternate(int type)
 {
-    setPixmap(energy.scaled(w,h));
+    if(type == 1) setPixmap(energy.scaled(w,h));
+    else if(type == 2) setPixmap(lives.scaled(w,h));
 }
 
 int obstacles::getTipo()
