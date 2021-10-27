@@ -1,2 +1,50 @@
-<!DOCTYPE RCC>
-<RCC version="1.0"/>
+<RCC>
+    <qresource prefix="/">
+        <file>images/Sierra Circular/sierra_0.png</file>
+        <file>images/Sierra Circular/sierra_1.png</file>
+        <file>images/Sierra Circular/sierra_2.png</file>
+        <file>images/Sierra Circular/sierra_3.png</file>
+        <file>images/Resistor Circular/resistor_0.png</file>
+        <file>images/PlatMovil/platmov_0.png</file>
+        <file>images/Obstaculos/obs_0.png</file>
+        <file>images/Obstaculos/obs_1.png</file>
+        <file>images/Obstaculos/obs_2.png</file>
+        <file>images/Jugadores/Per_1.png</file>
+        <file>images/Jugadores/Per_2.png</file>
+        <file>images/Jugadores/Per_3.png</file>
+        <file>images/Jugadores/Per_4.png</file>
+        <file>images/Jugadores/Per_5.png</file>
+        <file>images/Jugadores/Per_6.png</file>
+        <file>images/Jugadores/Per_7.png</file>
+        <file>images/Cargador/charge_0.png</file>
+        <file>images/Cargador/charge_1.png</file>
+        <file>images/Cargador/charge_2.png</file>
+        <file>images/Boton/button_1.png</file>
+        <file>images/Boton/button_2.png</file>
+        <file>images/Boton/button_3.png</file>
+        <file>images/Boton/button_4.png</file>
+        <file>images/Bombilla/bulb_0.png</file>
+        <file>images/Bombilla/bulb_1.png</file>
+        <file>images/Bombilla/bulb_2.png</file>
+        <file>images/BolaCanon/ball_0.png</file>
+        <file>images/Jugadores/Per_0.png</file>
+        <file>images/Obstaculos/obs.png</file>
+        <file>images/Boton/button_0.png</file>
+        <file>images/Sierra Circular/sierra.png</file>
+        <file>images/Bombilla/bulb.png</file>
+        <file>images/Canon/base.png</file>
+        <file>images/Canon/tube.png</file>
+        <file>images/Obstaculos/obs_energy.png</file>
+        <file>images/Instrucciones_BGD/mainMenu.png</file>
+        <file>images/Obstaculos/obs_lives.png</file>
+        <file>images/Instrucciones_BGD/victory.png</file>
+        <file>images/Instrucciones_BGD/instruc_0.png</file>
+        <file>images/Instrucciones_BGD/instruc_1.png</file>
+        <file>images/Instrucciones_BGD/instruc_2.png</file>
+        <file>images/Instrucciones_BGD/instruc_3.png</file>
+        <file>images/Instrucciones_BGD/instruc_4.png</file>
+        <file>images/Instrucciones_BGD/instruc_5.png</file>
+        <file>images/Instrucciones_BGD/userValidar.png</file>
+        <file>images/Instrucciones_BGD/instruc_6.png</file>
+    </qresource>
+</RCC>

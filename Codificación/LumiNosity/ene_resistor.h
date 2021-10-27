@@ -8,7 +8,17 @@
 class ene_resistor: public QObject, public QGraphicsPixmapItem
 {
 public:
-    ene_resistor();
+    ene_resistor(int width, int height);
+    bool getHasButton();
+    void setHasButton(bool setButt, int numOfButt);
+    void setReplacement(int rep);
+    int getReplacement();
+    int getNumButton();
+    void replace(int type);
+private:
+    QPixmap original, cables, img;
+    int w,h, numButton = 0, replacement = 0;
+    bool hasButton = false;
 };
 
 #endif // ENE_RESISTOR_H
