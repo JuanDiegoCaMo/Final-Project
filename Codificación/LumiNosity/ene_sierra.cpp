@@ -112,3 +112,13 @@ void ene_sierra::setVelAngMax(long double _WMAX)
 {
     velAngMax = _WMAX;
 }
+
+bool ene_sierra::getDir()
+{
+    return dir;
+}
+
+void ene_sierra::setDir(bool _dir)
+{
+    dir = _dir;
+}

@@ -29,11 +29,14 @@ public:
     void setCounter(long long int counter);
     long double getVelAngMax();
     void setVelAngMax(long double _WMAX);
+    bool getDir();
+    void setDir(bool _dir);
 private:
     QPixmap original, img;
     int w,h, cont=0;
     bool dirAnim = true;
     int typeMov = 0;
+    bool dir = true;
     long double velAng = 0, initAng = 0, velAngMax = 0;
     long int a = 1, b = 1, centerX = 0, centerY = 0;
     unsigned long long int n = 0;

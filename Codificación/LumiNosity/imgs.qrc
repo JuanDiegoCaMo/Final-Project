@@ -35,12 +35,16 @@
         <file>images/Canon/base.png</file>
         <file>images/Canon/tube.png</file>
         <file>images/Obstaculos/obs_energy.png</file>
-        <file>images/Instrucciones_BGD/controles_0.png</file>
-        <file>images/Instrucciones_BGD/controles_1.png</file>
-        <file>images/Instrucciones_BGD/disparos_0.png</file>
-        <file>images/Instrucciones_BGD/enemigos_0.png</file>
-        <file>images/Instrucciones_BGD/howtowin_0.png</file>
         <file>images/Instrucciones_BGD/mainMenu.png</file>
         <file>images/Obstaculos/obs_lives.png</file>
+        <file>images/Instrucciones_BGD/victory.png</file>
+        <file>images/Instrucciones_BGD/instruc_0.png</file>
+        <file>images/Instrucciones_BGD/instruc_1.png</file>
+        <file>images/Instrucciones_BGD/instruc_2.png</file>
+        <file>images/Instrucciones_BGD/instruc_3.png</file>
+        <file>images/Instrucciones_BGD/instruc_4.png</file>
+        <file>images/Instrucciones_BGD/instruc_5.png</file>
+        <file>images/Instrucciones_BGD/userValidar.png</file>
+        <file>images/Instrucciones_BGD/instruc_6.png</file>
     </qresource>
 </RCC>

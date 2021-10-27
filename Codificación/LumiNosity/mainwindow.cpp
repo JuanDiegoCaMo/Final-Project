@@ -7,10 +7,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
-    ui->barCanon1->hide();
-    ui->barCanon2->hide();
-    ui->goNext->hide();
-    ui->goBack->hide();
+    ui->userName->setVisible(false);
+    ui->userPassword->setVisible(false);
+    ui->userName->setEnabled(false);
+    ui->userPassword->setEnabled(false);
+    ui->enterData->setVisible(false);
+    ui->enterData->setEnabled(false);
+    ui->volver->setVisible(false);
+    ui->volver->setEnabled(false);
+    ui->barCanon1->setVisible(false);
+    ui->barCanon2->setVisible(false);
+    ui->goNext->setVisible(false);
+    ui->goBack->setVisible(false);
     ui->goBack->setEnabled(false);
     ui->goNext->setEnabled(false);
     int separation = 100;
@@ -18,6 +26,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->loadGame->setGeometry(tam*ancho/2-221/2,tam*alto/2-separation*2/2,221,43);
     ui->exit->setGeometry(tam*ancho/2-221/2,tam*alto/2-separation*1/2,221,43);
     ui->instruc->setGeometry(tam*ancho/2-401/2,tam*alto/2-separation*0/2,401,43);
+    ui->goNext->setGeometry(tam*ancho-13*tam/2,tam*1,221,43);
+    ui->goBack->setGeometry(tam*1,tam*1,221,43);
+    ui->userName->setGeometry(tam*ancho/2,tam*alto/2-tam*3,tam*6,tam);
+    ui->userPassword->setGeometry(tam*ancho/2,tam*alto/2,tam*6,tam);
+    ui->enterData->setGeometry(tam*ancho/2-221/2,tam*alto-separation*4/2,221,43);
+    ui->volver->setGeometry(tam*ancho/2-221/2,tam*alto-separation*3/2,221,43);
     setupWindow(true);
 }
 
@@ -91,8 +105,8 @@ void MainWindow::setupMapa(bool deleteTimers)
     scene->addItem(prot2);
     scene->addItem(ball);
     scene->addItem(ball2);
-    ball->hide();
-    ball2->hide();
+    ball->setVisible(false);
+    ball2->setVisible(false);
 }
 
 void MainWindow::setupObjectslvl1()
@@ -270,20 +284,6 @@ void MainWindow::setupObjectslvl1()
                             sierra[contSierras]->setVelAng(2*M_PI/periodo);
                         }
                         else if(sierra[contSierras]->getTypeMov() == 2){
-                            /*centerY = tam*3;
-                            if(contSierras<2){
-                                centerX = tam*11;
-                                sierra[contSierras]->setCenterX(centerX);
-                            }
-                            else{
-                                centerX = tam*21;
-                                sierra[contSierras]->setCenterX(centerX);
-                            }
-                            if(contSierras%2==0) sierra[contSierras]->setInitAng(5*M_PI/180);
-                            else sierra[contSierras]->setInitAng(-5*M_PI/180);
-                            sierra[contSierras]->setVelAng(2*M_PI/3000);
-                            sierra[contSierras]->setAngMax(10*M_PI/180); //Ang Max
-                            sierra[contSierras]->setCenterY(centerY);*/
                             if(contSierras<2) centerX = tam*11, centerY = tam*5;
                             else centerX = tam*21, centerY = tam*5;
                             sierra[contSierras]->setCenterX(centerX);
@@ -377,8 +377,8 @@ void MainWindow::setupObjectslvl1()
     ui->barCanon2->setValue(0);
     geoCan1 = ui->barCanon1->saveGeometry();
     geoCan2 = ui->barCanon2->saveGeometry();
-    ui->barCanon1->hide();
-    ui->barCanon2->hide();
+    ui->barCanon1->setVisible(false);
+    ui->barCanon2->setVisible(false);
     for(int i=0; i<contCanons; i++) scene->addItem(canion[i]);
     for(int i=0; i<contSierras; i++) scene->addItem(sierra[i]);
     for(int i=0; i<contPlats; i++) scene->addItem(plat1[i]);
@@ -451,8 +451,14 @@ void MainWindow::sceneScale2()
         scaleFactor = 1.25;
         ui->graphicsView->scale(scaleFactor,scaleFactor);
 
-        ui->barCanon1->setGeometry(int(prot1->x())-9*tam/5,int(prot1->y())-tam/4,9*tam/4,tam/3);
-        ui->barCanon2->setGeometry(int(prot2->x())+7*tam/10,int(prot2->y())+tam/4,9*tam/4,tam/3);
+        if(actualLvl == 2){
+            ui->barCanon1->setGeometry(int(prot1->x())-9*tam/5,int(prot1->y())-tam/4,9*tam/4,tam/3);
+            ui->barCanon2->setGeometry(int(prot2->x())+7*tam/10,int(prot2->y())+tam/4,9*tam/4,tam/3);
+        }
+        else{
+            ui->barCanon1->setGeometry(int(prot1->x())-7*tam/5,int(prot1->y())+2*tam/4,9*tam/4,tam/3);
+            ui->barCanon2->setGeometry(int(prot2->x())+11*tam/10,int(prot2->y())+2*tam/4,9*tam/4,tam/3);
+        }
     }
     else{
         if(scaleFactor == 1.25) {
@@ -521,7 +527,11 @@ void MainWindow::refreshLvl(bool isSameLvl)
             newInfo.push_back(lives+48);
         }
     }
-    codeTxt(7,newInfo);
+    codeTxt(7,newInfo,string("../LumiNosity/sudo.dat"));
+    for(size_t i=0; i<6; i++){
+        users[found+i] = newInfo[i];
+    }
+    codeTxt(7,users,string("../LumiNosity/usersInfo.dat"));
     setupMapa(false);
 }
 
@@ -565,7 +575,11 @@ void MainWindow::deleteAll()
     lives = 3, actualLvl = 1;
     string newInfo;
     newInfo.append("lny913");
-    codeTxt(7,newInfo);
+    codeTxt(7,newInfo,string("../LumiNosity/sudo.dat"));
+    for(size_t i=0; i<6; i++){
+        users[found+i] = newInfo[i];
+    }
+    codeTxt(7,users,string("../LumiNosity/usersInfo.dat"));
 }
 
 void MainWindow::nextLvl()
@@ -608,23 +622,64 @@ void MainWindow::nextLvl()
         {
         case QMessageBox::Ok:
                 timeEndGame->start(10000);
-                ui->graphicsView->setBackgroundBrush(QBrush(QImage(":/images/Instrucciones_BGD/mainMenu.png")));
+                for(int i=0;i<6;i++){
+                    if(i<lives) vidas[i]->setVisible(false);
+                    energy[i]->setVisible(false);
+                }
+                ui->graphicsView->setBackgroundBrush(QBrush(QImage(":/images/Instrucciones_BGD/victory.png")));
                 deleteAll();
                 break;
         }
     }
 }
 
+void MainWindow::setUsersVerify(bool isLoad)
+{
+    QImage background;
+    if(isLoad) background = QImage(":/images/Instrucciones_BGD/userValidar.png");
+    else background = QImage(":/images/Instrucciones_BGD/mainMenu.png");
+    background = background.scaled(tam*ancho,tam*alto);
+    ui->graphicsView->setBackgroundBrush(QBrush(background));
+    ui->newGame->setEnabled(!isLoad);
+    ui->loadGame->setEnabled(!isLoad);
+    ui->exit->setEnabled(!isLoad);
+    ui->instruc->setEnabled(!isLoad);
+    ui->enterData->setEnabled(isLoad);
+    ui->volver->setEnabled(isLoad);
+    ui->userName->setEnabled(isLoad);
+    ui->userPassword->setEnabled(isLoad);
+    ui->newGame->setVisible(!isLoad);
+    ui->loadGame->setVisible(!isLoad);
+    ui->exit->setVisible(!isLoad);
+    ui->instruc->setVisible(!isLoad);
+    ui->volver->setVisible(isLoad);
+    ui->enterData->setVisible(isLoad);
+    ui->userName->setVisible(isLoad);
+    ui->userPassword->setVisible(isLoad);
+}
+
+void MainWindow::removeUsersVerify()
+{
+    ui->volver->setVisible(false);
+    ui->enterData->setVisible(false);
+    ui->userName->setVisible(false);
+    ui->userPassword->setVisible(false);
+    ui->volver->setEnabled(false);
+    ui->enterData->setEnabled(false);
+    ui->userName->setEnabled(false);
+    ui->userPassword->setEnabled(false);
+}
+
 bool MainWindow::evalEnergy(bool isProt1, int modify)
 {
     if(isProt1){
-        if(modify<0) energy[prot1->getEnergy()-1]->hide();
-        else if(modify>0)    energy[prot1->getEnergy()]->show();
+        if(modify<0) energy[prot1->getEnergy()-1]->setVisible(false);
+        else if(modify>0)    energy[prot1->getEnergy()]->setVisible(true);
         prot1->setEnergy(prot1->getEnergy()+modify);
     }
     else{
-        if(modify<0) energy[prot2->getEnergy()+2]->hide();
-        else if(modify>0)    energy[prot2->getEnergy()+3]->show();
+        if(modify<0) energy[prot2->getEnergy()+2]->setVisible(false);
+        else if(modify>0)    energy[prot2->getEnergy()+3]->setVisible(true);
         prot2->setEnergy(prot2->getEnergy()+modify);
     }
     if(prot2->getEnergy() == 0 || prot1->getEnergy() == 0){
@@ -660,7 +715,7 @@ bool MainWindow::evalEnergy(bool isProt1, int modify)
     return false;
 }
 
-bool MainWindow::codeTxt(int semilla, string content)
+bool MainWindow::codeTxt(int semilla, string content, string n_archivo)
 {
     bool result=true;
     string texto,binario;
@@ -669,7 +724,7 @@ bool MainWindow::codeTxt(int semilla, string content)
         binario=text2bin(texto);
         binario=reglas_codifica(binario,semilla,true);
         texto=bin2text(binario);
-        escribir(texto,"../LumiNosity/sudo.dat",false);
+        escribir(texto,n_archivo,false);
     }  catch (...) {
         result=false;
     }
@@ -753,7 +808,7 @@ void MainWindow::simul()
     float h = ui->graphicsView->height(), g = 10;
     float x1, x2, y1, y2;
     if(ball->getActivate()){
-        ball->show();
+        ball->setVisible(true);
         x1 = ball->getX0()+ball->getVx0()*ball->getN()*0.007*T;
         y1 = ball->getY0()+ball->getVy0()*ball->getN()*0.007*T-0.5*g*ball->getN()*0.007*T*ball->getN()*0.007*T;
         ball->setPos(int(x1),int(h-y1-ball->getHeight()));
@@ -762,32 +817,32 @@ void MainWindow::simul()
             if(mapa[i]->getTipo() == 0){
                 if(mapa[i]->collidesWithItem(ball)){
                     ball->setActivate(false);
-                    ball->hide();
+                    ball->setVisible(false);
                 }
             }
         }
         for(int i=0; i<contSierras; i++){
             if(sierra[i]->collidesWithItem(ball)){
                 ball->setActivate(false);
-                ball->hide();
+                ball->setVisible(false);
             }
         }
         for(int i=0; i<contPlats; i++){
             if(plat1[i]->collidesWithItem(ball)){
                 ball->setActivate(false);
-                ball->hide();
+                ball->setVisible(false);
             }
         }
         for(int i=0; i<contButts; i++){
             if(button[i]->collidesWithItem(ball)){
                 ball->setActivate(false);
-                ball->hide();
+                ball->setVisible(false);
                 changeObjStates(i);
             }
         }
     }
     if(ball2->getActivate()){
-        ball2->show();
+        ball2->setVisible(true);
         x2 = ball2->getX0()+ball2->getVx0()*ball2->getN()*0.007*T;
         y2 = ball2->getY0()+ball2->getVy0()*ball2->getN()*0.007*T-0.5*g*ball2->getN()*0.007*T*ball2->getN()*0.007*T;
         ball2->setPos(int(x2),int(h-y2-ball2->getHeight()));
@@ -796,26 +851,26 @@ void MainWindow::simul()
             if(mapa[i]->getTipo() == 0){
                 if(mapa[i]->collidesWithItem(ball2)){
                     ball2->setActivate(false);
-                    ball2->hide();
+                    ball2->setVisible(false);
                 }
             }
         }
         for(int i=0; i<contSierras; i++){
             if(sierra[i]->collidesWithItem(ball2)){
                 ball2->setActivate(false);
-                ball2->hide();
+                ball2->setVisible(false);
             }
         }
         for(int i=0; i<contPlats; i++){
             if(plat1[i]->collidesWithItem(ball2)){
                 ball2->setActivate(false);
-                ball2->hide();
+                ball2->setVisible(false);
             }
         }
         for(int i=0; i<contButts; i++){
             if(button[i]->collidesWithItem(ball2)){
                 ball2->setActivate(false);
-                ball2->hide();
+                ball2->setVisible(false);
                 changeObjStates(i);
             }
         }
@@ -834,16 +889,14 @@ void MainWindow::simulSierras()
             sierra[i]->setCounter(sierra[i]->getCounter()+1);
             if(sierra[i]->getCounter() >= periodo/T) sierra[i]->setCounter(0);
         }
-        else if(sierra[i]->getTypeMov() == 2){ //Mov Pendular
-            /*sierra[i]->setAngInTime(sierra[i]->getAngMax()*cos(sierra[i]->getVelAng()*sierra[i]->getCounter()*T+sierra[i]->getInitAng())); //b = Ang en funcion de t; a = Ang Max
-            sierra[i]->setX((10/pow(sierra[i]->getVelAng(),2))*sin(sierra[i]->getAngInTime()));
-            sierra[i]->setY((10/pow(sierra[i]->getVelAng(),2))*cos(sierra[i]->getAngInTime()));
-            if(sierra[i]->getCounter() >= periodo/T) sierra[i]->setCounter(0);*/
+        else if(sierra[i]->getTypeMov() == 2){ //MCUA O Mov Elip Unif Accel
             sierra[i]->setVelAngMax(sierra[i]->getVelAng()+sierra[i]->getCounter()*T*0.0000001);
             sierra[i]->setX(sierra[i]->getA()*cos(sierra[i]->getVelAngMax()*sierra[i]->getCounter()*T+sierra[i]->getInitAng()+sierra[i]->getVelAngMax()*T)+sierra[i]->getCenterX());
             sierra[i]->setY(sierra[i]->getB()*sin(sierra[i]->getVelAngMax()*sierra[i]->getCounter()*T+sierra[i]->getInitAng()+sierra[i]->getVelAngMax()*T)+sierra[i]->getCenterY());
-            sierra[i]->setCounter(sierra[i]->getCounter()+1);
-            //if(sierra[i]->getCounter() >= periodo/T) sierra[i]->setCounter(0);
+            if(sierra[i]->getDir()) sierra[i]->setCounter(sierra[i]->getCounter()+1);
+            else sierra[i]->setCounter(sierra[i]->getCounter()-1);
+            if(sierra[i]->getCounter()*T*0.0000001 >= T*0.0001) sierra[i]->setDir(false);
+            else if(sierra[i]->getCounter()*T*0.0000001 <= T*0.0000001) sierra[i]->setDir(true);
         }
     }
 }
@@ -869,7 +922,7 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
                 canion[elCanon1]->setRotation(0);
                 canion[elCanon1]->setImg(0,true);
                 canion[elCanon1-1]->setImg(0,false);
-                ui->barCanon1->hide();
+                ui->barCanon1->setVisible(false);
             }
             if(actualLvl == 1) sceneScale1();
             else if(actualLvl >= 2) sceneScale2();
@@ -928,7 +981,7 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
                 canion[elCanon1]->setRotation(0);
                 canion[elCanon1]->setImg(2,true);
                 canion[elCanon1-1]->setImg(0,false);
-                ui->barCanon2->hide();
+                ui->barCanon2->setVisible(false);
             }
             if(actualLvl == 1) sceneScale1();
             else if(actualLvl >= 2) sceneScale2();
@@ -1046,7 +1099,7 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
     }
     else if(prot1->getEnergy() >= 2){
         int elCanon1 = 0;
-        ui->barCanon1->show();
+        ui->barCanon1->setVisible(true);
         for(int i=0; i<contCanons; i++){
             if(canion[i]->x() == prot1->x()+11*tam/8 && canion[i]->y() == prot1->y()+tam/20) elCanon1 = i;
         }
@@ -1157,7 +1210,7 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
     }
     else if(prot2->getEnergy() >= 2){
         int elCanon1 = 0;
-        ui->barCanon2->show();
+        ui->barCanon2->setVisible(true);
         for(int i=0; i<contCanons; i++){
             if(canion[i]->x() == prot2->x()-11*tam/8 && canion[i]->y() == prot2->y()+tam/20) elCanon1 = i;
         }
@@ -1200,21 +1253,27 @@ void MainWindow::keyPressEvent(QKeyEvent *key){
 
 void MainWindow::on_newGame_clicked()
 {
-    setupMapa(false);
-    ui->newGame->hide();
+    isNewUser = true;
+    setUsersVerify(true);
+    /*setupMapa(false);
+    ui->newGame->setVisible(false);
     ui->newGame->setEnabled(false);
-    ui->loadGame->hide();
+    ui->loadGame->setVisible(false);
     ui->loadGame->setEnabled(false);
-    ui->exit->hide();
+    ui->exit->setVisible(false);
     ui->exit->setEnabled(false);
-    ui->instruc->hide();
+    ui->instruc->setVisible(false);
     ui->instruc->setEnabled(false);
+    ui->volver->setVisible(false);
+    ui->volver->setEnabled(false);
+    ui->enterData->setVisible(false);
+    ui->enterData->setEnabled(false);*/
 }
 
 
 void MainWindow::on_loadGame_clicked()
 {
-    string linkInfo = "../LumiNosity/sudo.dat", getInfo;
+    /*string linkInfo = "../LumiNosity/sudo.dat", getInfo;
     int semilla = 7;
     bool write = true;
     getInfo = decodeTxt(semilla,linkInfo);
@@ -1224,14 +1283,16 @@ void MainWindow::on_loadGame_clicked()
     actualLvl = getInfo[4]-48;
     lives = getInfo[5]-48;
     setupMapa(false);
-    ui->newGame->hide();
+    ui->newGame->setVisible(false);
     ui->newGame->setEnabled(false);
-    ui->loadGame->hide();
+    ui->loadGame->setVisible(false);
     ui->loadGame->setEnabled(false);
-    ui->exit->hide();
+    ui->exit->setVisible(false);
     ui->exit->setEnabled(false);
-    ui->instruc->hide();
-    ui->instruc->setEnabled(false);
+    ui->instruc->setVisible(false);
+    ui->instruc->setEnabled(false);*/
+    isNewUser = false;
+    setUsersVerify(true);
 }
 
 
@@ -1245,40 +1306,29 @@ void MainWindow::on_instruc_clicked()
 {
     QImage background;
     if(instrucCount == 0){
-        ui->newGame->hide();
+        ui->newGame->setVisible(false);
         ui->newGame->setEnabled(false);
-        ui->loadGame->hide();
+        ui->loadGame->setVisible(false);
         ui->loadGame->setEnabled(false);
-        ui->exit->hide();
+        ui->exit->setVisible(false);
         ui->exit->setEnabled(false);
-        ui->instruc->hide();
+        ui->instruc->setVisible(false);
         ui->instruc->setEnabled(false);
-        ui->goNext->show();
-        ui->goBack->show();
+        ui->goNext->setVisible(true);
+        ui->goBack->setVisible(true);
         ui->goNext->setEnabled(true);
         ui->goBack->setEnabled(true);
         ui->graphicsView->setGeometry(0,0,tam*ancho+2,tam*alto+2);
         setFixedSize(tam*ancho+2,tam*alto+2);
         setWindowTitle("LumiNosity");
-        background = QImage(":/images/Instrucciones_BGD/controles_0.png");
-        ui->goNext->setGeometry(tam*ancho-13*tam/2,tam*1,221,43);
-        ui->goBack->setGeometry(tam*1,tam*1,221,43);
+        background = QImage(QString(":/images/Instrucciones_BGD/instruc_")+QString(instrucCount+48)+QString(".png"));
     }
-    else if(instrucCount == 5){
+    else if(instrucCount == 7){
         instrucCount = 0;
         background = QImage(":/images/Instrucciones_BGD/mainMenu.png");
     }
-    else if(instrucCount == 1){
-        background = QImage(":/images/Instrucciones_BGD/controles_1.png");
-    }
-    else if(instrucCount == 2){
-        background = QImage(":/images/Instrucciones_BGD/disparos_0.png");
-    }
-    else if(instrucCount == 3){
-        background = QImage(":/images/Instrucciones_BGD/enemigos_0.png");
-    }
-    else if(instrucCount == 4){
-        background = QImage(":/images/Instrucciones_BGD/howtowin_0.png");
+    else{
+        background = QImage(QString(":/images/Instrucciones_BGD/instruc_")+QString(instrucCount+48)+QString(".png"));
     }
     background = background.scaled(tam*ancho,tam*alto);
     ui->graphicsView->setBackgroundBrush(QBrush(background));
@@ -1288,18 +1338,18 @@ void MainWindow::on_instruc_clicked()
 void MainWindow::on_goNext_clicked()
 {
     instrucCount++;
-    if(instrucCount == 5){
-        ui->goNext->hide();
-        ui->goBack->hide();
+    if(instrucCount == 7){
+        ui->goNext->setVisible(false);
+        ui->goBack->setVisible(false);
         ui->goNext->setEnabled(false);
         ui->goBack->setEnabled(false);
-        ui->newGame->show();
+        ui->newGame->setVisible(true);
         ui->newGame->setEnabled(true);
-        ui->loadGame->show();
+        ui->loadGame->setVisible(true);
         ui->loadGame->setEnabled(true);
-        ui->exit->show();
+        ui->exit->setVisible(true);
         ui->exit->setEnabled(true);
-        ui->instruc->show();
+        ui->instruc->setVisible(true);
         ui->instruc->setEnabled(true);
     }
     on_instruc_clicked();
@@ -1310,5 +1360,106 @@ void MainWindow::on_goBack_clicked()
 {
     if(instrucCount-1 >= 0) instrucCount--;
     on_instruc_clicked();
+}
+
+
+void MainWindow::on_enterData_clicked()
+{
+    QString name = ui->userName->toPlainText();
+    QString password = ui->userPassword->toPlainText();
+    string realName = name.toStdString(), realUser;
+    string realPassword = password.toStdString();
+    realUser.clear();
+    realUser = string("\n,") + realName + string(";");
+    int semilla = 7;
+    users = decodeTxt(semilla,string("../LumiNosity/usersInfo.dat"));
+    found = users.find(realUser);
+    if(realName.find(':')!=string::npos || realName.find(';')!=string::npos || realName.find(',')!=string::npos || realName.find('\n')!=string::npos || realPassword.find(':')!=string::npos || realPassword.find(';')!=string::npos || realPassword.find(',')!=string::npos || realPassword.find('\n')!=string::npos){
+        switch(QMessageBox::question(
+            this,
+            tr("LumiNosity"),
+            tr("Recuerde no ingresar: , : ; o saltos de linea.\n"
+               "Por favor intente nuevamente.") ,
+        QMessageBox::Ok))
+        {
+        case QMessageBox::Ok:
+                ui->userName->clear();
+                ui->userPassword->clear();
+                break;
+        }
+    }
+    else{
+        if(isNewUser == false && found!=string::npos){
+            realUser = realUser + realPassword + string(":");
+            found = users.find(realUser);
+            if(found!=string::npos){
+                found = users.find(':',found);
+                found = found+1;
+                string infoLvl;
+                for(size_t i = 0; i<6;i++){
+                    infoLvl.push_back(users[found+i]);
+                }
+                realUser.append(infoLvl);
+                string linkInfo = "../LumiNosity/sudo.dat", getInfo;
+                codeTxt(semilla,infoLvl,linkInfo);
+                bool write = true;
+                getInfo = decodeTxt(semilla,linkInfo);
+                if(getInfo[0] == 'l' && getInfo[1] == 'n' && getInfo[2] == 'y' && getInfo[3] == '9') write = false;
+                codeTxt(semilla,linkInfo,write);
+                getInfo = decodeTxt(semilla,linkInfo);
+                actualLvl = getInfo[4]-48;
+                lives = getInfo[5]-48;
+                removeUsersVerify();
+                setupMapa(false);
+            }
+        }
+        else if(isNewUser == true && found==string::npos){
+            realUser = string("\n,") + realName + string(";") + realPassword + string(":lny913");
+            users = users + realUser;
+            found = users.find(realUser);
+            found = users.find(':',found);
+            found = found+1;
+            actualLvl = 1;
+            lives = 3;
+            codeTxt(semilla,string("lny913"),string("../LumiNosity/sudo.dat"));
+            codeTxt(semilla,users,string("../LumiNosity/usersInfo.dat"));
+            removeUsersVerify();
+            setupMapa(false);
+        }
+        else if(isNewUser == true && found!=string::npos){
+            switch(QMessageBox::question(
+                this,
+                tr("LumiNosity"),
+                tr("Usuario no Válido.\n"
+                   "Por favor intente nuevamente.") ,
+            QMessageBox::Ok))
+            {
+            case QMessageBox::Ok:
+                    ui->userName->clear();
+                    ui->userPassword->clear();
+                    break;
+            }
+        }
+        if(isNewUser == false && found==string::npos){
+            switch(QMessageBox::question(
+                this,
+                tr("LumiNosity"),
+                tr("Usuario o Contraseña no Válido.\n"
+                   "Por favor intente nuevamente.") ,
+            QMessageBox::Ok))
+            {
+            case QMessageBox::Ok:
+                    ui->userName->clear();
+                    ui->userPassword->clear();
+                    break;
+            }
+        }
+    }
+}
+
+
+void MainWindow::on_volver_clicked()
+{
+    setUsersVerify(false);
 }
 

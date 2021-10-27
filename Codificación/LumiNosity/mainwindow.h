@@ -48,8 +48,10 @@ public:
     void refreshLvl(bool isSameLvl);
     void deleteAll();
     void nextLvl();
+    void setUsersVerify(bool isLoad);
+    void removeUsersVerify();
     bool evalEnergy(bool isProt1, int modify);
-    bool codeTxt(int semilla, string content);
+    bool codeTxt(int semilla, string content, string n_archivo);
     bool codeTxt(int semilla,string n_archivo, bool first);
     string decodeTxt(int semilla, string n_archivo);
 public slots:
@@ -71,6 +73,10 @@ private slots:
 
     void on_goBack_clicked();
 
+    void on_enterData_clicked();
+
+    void on_volver_clicked();
+
 private:
     Ui::MainWindow *ui;
     prota *prot1, *prot2;
@@ -86,6 +92,8 @@ private:
     QGraphicsScene *scene, *scene2;
     QByteArray geoCan1, geoCan2;
     QTimer *timeMovProta, *timeSimuls, *timeSimulsSierra, *timeEndGame;
+    string users;
+    size_t found;
     short int lvl1[alto][ancho];
     int actualLvl = 1;
     int instrucCount = 0;
@@ -93,6 +101,6 @@ private:
     int periodo = 3000;
     int contObs = 0, contCanons = 0, contPlats = 0, contSierras = 0, contResis = 0, contButts = 0, lives = 3, T = 50, movY = 0, movY2 = 0;
     double scaleFactor = 0.625;
-    bool canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false;
+    bool canonKeys1 = false, canonKeys2 = false, bulb1 = false, bulb2 = false, isNewUser = true;
 };
 #endif // MAINWINDOW_H
